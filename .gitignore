@@ -36,6 +36,7 @@ ENV/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+experiments.ipynb
 *.ipynb_metadata/
 
 # Testing
