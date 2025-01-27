@@ -3,8 +3,8 @@ from typing import Any, Optional
 
 from pydantic import BaseModel
 
-from browser.dom.history_tree_processor.service import DOMHistoryElement
-from browser.dom.views import DOMState
+from src.browser.dom.history_tree_processor.service import DOMHistoryElement
+from src.browser.dom.views import DOMState
 
 
 # Pydantic

@@ -65,7 +65,7 @@
         label.style.color = 'white';
         label.style.padding = '1px 4px';
         label.style.borderRadius = '4px';
-        label.style.fontSize = `${Math.min(12, Math.max(8, rect.height / 2))}px`; // Responsive font size
+        label.style.fontSize = `${Math.min(14, Math.max(10, rect.height / 2))}px`; // Responsive font size
         label.textContent = index;
 
         // Calculate label position

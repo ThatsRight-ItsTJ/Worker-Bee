@@ -1,29 +1,40 @@
 
 import logging
-from typing import Annotated
-from typing import List, Literal
+from typing import Annotated, List, Literal
 from typing_extensions import TypedDict
-import uuid
 
-from langchain_core.messages import AnyMessage, SystemMessage, AIMessage, HumanMessage, RemoveMessage
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, AIMessagePromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
+from langchain_core.messages import (
+    AnyMessage, 
+    HumanMessage, 
+    SystemMessage
+)
+from langchain_core.prompts import (
+    AIMessagePromptTemplate, 
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate, 
+    MessagesPlaceholder,
+    SystemMessagePromptTemplate
+)
 from langchain_core.runnables import RunnableConfig
-from langgraph.prebuilt import ToolNode
-from langgraph.graph import StateGraph, START, END
+from langgraph.graph import END, StateGraph
 from langgraph.graph.message import add_messages
-
-from browser.browser.context import BrowserContext, BrowserContextConfig
-from browser.browser.browser import Browser
-from browser.tools.browser_tools import GoToUrl, ClickElement, InputText, GoBack
-from browser.tools.ops_tools import submit_result, think, raise_error, open_file
-from prompts import REACT_PROMPT, CONCLUSIONS_TEMPLATE, LOG_MESSAGE_TEMPLATE, PUNISHMENT_MESSAGE_TEMPLATE, USER_INPUT_TEMPLATE
-
-from llm_clients import llm
+from langgraph.prebuilt import ToolNode
 from langgraph.types import Command
 
-logger = logging.getLogger(__name__)
+from src.agent.llm_clients import llm
+from src.agent.prompts.search_agent import REACT_PROMPT
+from src.agent.prompts.templates import (
+    CONCLUSIONS_TEMPLATE, 
+    LOG_MESSAGE_TEMPLATE,
+    PUNISHMENT_MESSAGE_TEMPLATE,
+    USER_INPUT_TEMPLATE
+)
+from src.browser.browser import Browser
+from src.browser.context import BrowserContext, BrowserContextConfig
+from src.tools.browser_tools import ClickElement, GoBack, GoToUrl, InputText
+from src.tools.ops_tools import open_file, raise_error, submit_result, think
 
-browser = Browser()
+logger = logging.getLogger(__name__)
 
 class AgentInput(TypedDict):
     query: str
@@ -33,7 +44,8 @@ class AgentOutput(TypedDict):
     final_output: str
 
 class AgentState(TypedDict):
-    browser: BrowserContext
+    browser: Browser
+    browser_context: BrowserContext
     messages: Annotated[List[AnyMessage], add_messages]
     query: str
     final_output: str
@@ -44,7 +56,14 @@ class OverallState(AgentState, AgentInput, AgentOutput):
 
 graph = StateGraph(OverallState, input=AgentInput, output=AgentOutput)
 
-tools = [GoToUrl(), ClickElement(), InputText(), GoBack(), submit_result, think, raise_error, open_file]
+tools = [GoToUrl(), 
+         ClickElement(), 
+         InputText(), 
+         GoBack(), 
+         submit_result, 
+         think, 
+         raise_error, 
+         open_file]
 
 tool_node = ToolNode(tools)
 
@@ -58,16 +77,19 @@ def build_browser(state: OverallState
         browser_window_size={"width": 1280, "height": 1100},
         highlight_elements=True
     )
+    browser = Browser()
     context = BrowserContext(browser, config)
     message = HumanMessagePromptTemplate.from_template(USER_INPUT_TEMPLATE)
-    message = message.format(query=state['query'], url=state['url'])
+    message = message.format(query=state['query'], 
+                             url=state['url'])
     return Command(goto="agent", 
-                   update={"browser": context, 
+                   update={"browser_context": context, 
+                           "browser": browser,
                            "messages": [message]})
 
-@graph.add_node
-def agent_preprocessing(state: OverallState):
-    downloads = state["browser"].downloads.items
+@graph.add_node #sends notification if downloaded files; sends toolmessage substitution if toolmessage has multimodal data
+def agent_preprocessing(state: OverallState) -> Command[Literal["agent"]]:
+    downloads = state["browser_context"].downloads.items
     new_downloads = [f"""
                      New file {item.name} has been downloaded, path: {item.fullpath}. 
                      Use tool 'open_file' to access it using the path as an argument.
@@ -86,17 +108,17 @@ def agent_preprocessing(state: OverallState):
     return Command(goto="agent")
 
 
-@graph.add_node
+@graph.add_node #react agent
 def agent(state: OverallState,
           config: RunnableConfig
           ) -> Command[Literal["tools", 
                                "agent", 
-                               END]]: # type: ignore
+                               "shutdown"]]: # type: ignore
 
     if state.get('final_output'):
-        return Command(goto=END)
+        return Command(goto="shutdown")
 
-    available_files = state["browser"].downloads.state
+    available_files = state["browser_context"].downloads.state
     system = SystemMessagePromptTemplate.from_template(REACT_PROMPT)
     model = llm.with_config(config=config
               ).bind_tools(tools)
@@ -118,7 +140,6 @@ def agent(state: OverallState,
             template = AIMessagePromptTemplate.from_template(CONCLUSIONS_TEMPLATE)
             payload = tool_call["args"] # type: ignore
             message = template.format(**payload)
-
             return Command(goto="agent", 
                            update={"messages": [message]})
         
@@ -132,8 +153,8 @@ def agent(state: OverallState,
                    update={"messages": [response, punishment_message]})
 
 
-@graph.add_node
-def message_splitter(state: AgentState
+@graph.add_node #extracts browser screen and action record from the toolmessage and adds them to the messages
+def toolmessage_processor(state: AgentState
                      ) -> Command[Literal["agent"]]:
     last_message = state['messages'][-1]
     prev_screen = [message for message in state['messages'] 
@@ -156,14 +177,14 @@ def message_splitter(state: AgentState
     
     return Command(goto="agent_preprocessing")
 
-# @graph.add_node
-# def process_downloads(state: AgentState
-#                    ) -> Command[Literal["agent"]]:
-    
-#     return 
+@graph.add_node
+async def shutdown(state: OverallState) -> Command[Literal[END]]: # type: ignore
+    browser = state["browser"]
+    context = state["browser_context"]
+    await context.close()
+    await browser.close()
+    return Command(goto=END)
 
 graph.set_entry_point("build_browser")
 graph.add_node("tools", tool_node)
-graph.add_edge("tools", "message_splitter")
-
-app = graph.compile()
+graph.add_edge("tools", "toolmessage_processor")

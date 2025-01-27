@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from typing import Type, Annotated
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, List, Tuple, Dict
-from browser.browser.context import BrowserContext, BrowserState
+from src.browser.context import BrowserContext, BrowserState
 
 from langchain_core.tools import BaseTool
 from langchain.callbacks.manager import CallbackManagerForToolRun
@@ -71,7 +71,7 @@ class SearchGoogle(BaseTool):
 	description: str = "This tool opens Google in browser and searches for the given query. Returns a screenshot of the search results."
 	args_schema: Type[BaseModel] = SearchGoogleInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -86,7 +86,7 @@ class SearchGoogle(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser: BrowserContext = state['browser']
+		browser: BrowserContext = state["browser_context"]
 		page = await browser.get_current_page()
 		await page.goto(f'https://www.google.com/search?q={query}&udm=14')
 		await page.wait_for_load_state()
@@ -104,7 +104,7 @@ class GoToUrl(BaseTool):
 	description: str = "This tool navigates to the specified URL in the browser and waits for the page to load."
 	args_schema: Type[BaseModel] = GoToUrlInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -119,7 +119,7 @@ class GoToUrl(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser: BrowserContext = state['browser']
+		browser: BrowserContext = state["browser_context"]
 		page = await browser.get_current_page()
 		await page.goto(url)
 		await page.wait_for_load_state()
@@ -134,7 +134,7 @@ class GoBack(BaseTool):
 	description: str = "This tool navigates back to the previous page in the browser history and waits for the page to load."
 	args_schema: Type[BaseModel] = GoBackInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -148,7 +148,7 @@ class GoBack(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser: BrowserContext = state['browser']
+		browser: BrowserContext = state["browser_context"]
 		page = await browser.get_current_page()
 		await page.go_back()
 		await page.wait_for_load_state()
@@ -166,7 +166,7 @@ class ClickElement(BaseTool):
 	description: str = "This tool clicks on an element identified by its index in the browser and handles any resulting actions like new tab creation."
 	args_schema: Type[BaseModel] = ClickElementInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 	
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -183,7 +183,7 @@ class ClickElement(BaseTool):
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
 		
-		browser: BrowserContext = state['browser']
+		browser: BrowserContext = state["browser_context"]
 		session = await browser.get_session()
 		browser_state = session.cached_state
 
@@ -227,7 +227,7 @@ class InputText(BaseTool):
 	description: str = "This tool inputs text into an element identified by its index in the browser."
 	args_schema: Type[BaseModel] = InputTextInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -244,7 +244,7 @@ class InputText(BaseTool):
 		xpath: Optional[str] = None,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		session = await browser.get_session()
 		browser_state = session.cached_state
 
@@ -268,7 +268,7 @@ class SwitchTab(BaseTool):
 	description: str = "This tool switches to a different browser tab specified by its ID and waits for the page to load."
 	args_schema: Type[BaseModel] = SwitchTabInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -283,7 +283,7 @@ class SwitchTab(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		await browser.switch_to_tab(page_id)
 		# Wait for tab to be ready
 		page = await browser.get_current_page()
@@ -300,7 +300,7 @@ class OpenTab(BaseTool):
 	description: str = "This tool creates a new browser tab and navigates to the specified URL."
 	args_schema: Type[BaseModel] = OpenTabInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -315,7 +315,7 @@ class OpenTab(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		await browser.create_new_tab(url)
 		content, artifacts = await format_output(browser, f'Opened new tab with {url}', browser_state_description, relevant_data)
 		return content, artifacts
@@ -330,7 +330,7 @@ class ExtractContent(BaseTool):
 	description: str = "This tool extracts the content from the current page, either as markdown (with links) or plain text."
 	args_schema: Type[BaseModel] = ExtractContentInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -345,7 +345,7 @@ class ExtractContent(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		page = await browser.get_current_page()
 		output_format = 'markdown' if include_links else 'text'
 		content = MainContentExtractor.extract(  # type: ignore
@@ -364,7 +364,7 @@ class ScrollDown(BaseTool):
 	description: str = "This tool scrolls down the page by a specified amount of pixels or by one page if no amount is specified."
 	args_schema: Type[BaseModel] = ScrollDownInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
 		raise NotImplementedError("Tool does not support sync")
@@ -378,7 +378,7 @@ class ScrollDown(BaseTool):
 		amount: Optional[int] = None,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		page = await browser.get_current_page()
 		if amount is not None:
 			await page.evaluate(f'window.scrollBy(0, {amount});')
@@ -399,7 +399,7 @@ class ScrollUp(BaseTool):
 	description: str = "This tool scrolls up the page by a specified amount of pixels or by one page if no amount is specified."
 	args_schema: Type[BaseModel] = ScrollUpInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
 		raise NotImplementedError("Tool does not support sync")
@@ -413,7 +413,7 @@ class ScrollUp(BaseTool):
 		amount: Optional[int] = None,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		page = await browser.get_current_page()
 		if amount is not None:
 			await page.evaluate(f'window.scrollBy(0, -{amount});')
@@ -434,7 +434,7 @@ class SendKeys(BaseTool):
 	description: str = "This tool sends keyboard keys to the current page."
 	args_schema: Type[BaseModel] = SendKeysInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
 		raise NotImplementedError("Tool does not support sync")
@@ -448,7 +448,7 @@ class SendKeys(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		page = await browser.get_current_page()
 		await page.keyboard.press(keys)
 		content, artifacts = await format_output(browser, f'⌨️  Sent keys: {keys}', browser_state_description, relevant_data)
@@ -463,7 +463,7 @@ class ScrollToText(BaseTool):
 	description: str = "This tool scrolls the page to make the specified text visible, trying different locator strategies."
 	args_schema: Type[BaseModel] = ScrollToTextInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -478,7 +478,7 @@ class ScrollToText(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 		) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		page = await browser.get_current_page()
 		try:
 			# Try different locator strategies
@@ -517,7 +517,7 @@ class GetDropdownOptions(BaseTool):
 	description: str = "This tool gets all options from a native dropdown element identified by its index."
 	args_schema: Type[BaseModel] = GetDropdownOptionsInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
@@ -532,7 +532,7 @@ class GetDropdownOptions(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		page = await browser.get_current_page()
 		selector_map = await browser.get_selector_map()
 		dom_element = selector_map[index]
@@ -606,7 +606,7 @@ class SelectDropdownOption(BaseTool):
 	description: str = "This tool selects an option from a dropdown element by its text value."
 	args_schema: Type[BaseModel] = SelectDropdownOptionInput
 	return_direct: bool = False
-	tags: list[str] = ['browser']
+	tags: list[str] = ["browser_context"]
 	response_format: str = "content_and_artifact"
 	def _run(self, *args, relevant_data: str, reasoning: str, **kwargs):
 		raise NotImplementedError("Tool does not support sync")
@@ -621,7 +621,7 @@ class SelectDropdownOption(BaseTool):
 		browser_state_description: str,
 		run_manager: Optional[CallbackManagerForToolRun] = None
 	) -> Tuple[List[dict], Dict[str, List[dict]]]:
-		browser = state['browser']
+		browser = state["browser_context"]
 		page = await browser.get_current_page()
 		selector_map = await browser.get_selector_map()
 		dom_element = selector_map[index]

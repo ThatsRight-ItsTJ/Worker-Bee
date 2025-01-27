@@ -2,8 +2,8 @@ import hashlib
 from dataclasses import dataclass
 from typing import Optional
 
-from browser.dom.history_tree_processor.view import DOMHistoryElement, HashedDomElement
-from browser.dom.views import DOMElementNode
+from src.browser.dom.history_tree_processor.view import DOMHistoryElement, HashedDomElement
+from src.browser.dom.views import DOMElementNode
 
 
 class HistoryTreeProcessor:

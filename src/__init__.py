@@ -1,11 +1,11 @@
-from browser.logging_config import setup_logging
+from src.logging_config import setup_logging
 
 setup_logging()
 
-from browser.browser.browser import Browser as Browser
-from browser.browser.browser import BrowserConfig as BrowserConfig
-from browser.dom.service import DomService as DomService
-from browser.tools.browser_tools import (
+from src.browser.browser import Browser as Browser
+from src.browser.browser import BrowserConfig as BrowserConfig
+from src.browser.dom.service import DomService as DomService
+from src.tools.browser_tools import (
     SearchGoogle,
     GoToUrl,
     GoBack,
@@ -13,7 +13,6 @@ from browser.tools.browser_tools import (
     InputText,
     SwitchTab,
     OpenTab,
-    ExtractContent,
     ScrollDown,
     ScrollUp,
     SendKeys,
@@ -22,7 +21,7 @@ from browser.tools.browser_tools import (
     SelectDropdownOption
 )
 
-from browser.tools.ops_tools import submit_result, think, raise_error
+from src.tools.ops_tools import submit_result, think, raise_error
 
 __all__ = [
 	'Browser',
@@ -35,7 +34,6 @@ __all__ = [
 	'InputText',
 	'SwitchTab',
 	'OpenTab',
-	'ExtractContent',
 	'ScrollDown',
 	'ScrollUp',
 	'SendKeys',

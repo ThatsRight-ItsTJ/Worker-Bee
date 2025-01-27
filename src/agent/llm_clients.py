@@ -1,4 +1,5 @@
 from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
+import os
 
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
@@ -10,8 +11,8 @@ tracemalloc.start()
 load_dotenv()
 
 llm = init_chat_model(
-    model="gpt-4o",
-    model_provider="azure_openai",
+    model=os.getenv("MODEL"),
+    model_provider=os.getenv("MODEL_PROVIDER"),
     temperature=0.5,
     configurable_fields=["temperature, model"],
     timeout=60,

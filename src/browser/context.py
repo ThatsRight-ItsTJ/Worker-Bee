@@ -22,14 +22,14 @@ from playwright.async_api import (
 	Page,
 )
 
-from browser.browser.views import BrowserError, BrowserState, TabInfo
-from browser.dom.service import DomService
-from browser.dom.views import DOMElementNode, SelectorMap
-from browser.utils import time_execution_sync
-from browser.browser.downloads import DownloadsRegistry, DownloadedItem
+from src.browser.views import BrowserError, BrowserState, TabInfo
+from src.browser.dom.service import DomService
+from src.browser.dom.views import DOMElementNode, SelectorMap
+from src.utils import time_execution_sync
+from src.browser.downloads import DownloadsRegistry, DownloadedItem
 
 if TYPE_CHECKING:
-	from browser.browser.browser import Browser
+	from src.browser.browser import Browser
 
 logger = logging.getLogger(__name__)
 
@@ -226,21 +226,30 @@ class BrowserContext:
 		async def on_page(page: Page):
 			await page.wait_for_load_state()
 			logger.debug(f'New page opened: {page.url}')
+
+			# Add PDF route handler
+			async def handle_route(route):
+				response = await route.fetch()
+				if 'content-type' in response.headers and response.headers['content-type'].lower() == 'application/pdf':
+					headers = {**response.headers, 'Content-Disposition': 'attachment'}
+					await route.fulfill(response=response, headers=headers)
+				else:
+					await route.continue_()
+
+			# Set up route handler for PDFs
+			await page.route("**/*", handle_route)
 			
 			async def handle_download_event(download):
 				try:
 					# Get suggested filename from the download
 					suggested_filename = download.suggested_filename
-					logger.info(f"Download started. Suggested filename: {suggested_filename}")
 					
 					if not suggested_filename:
 						suggested_filename = f"download_{int(time.time())}"
-						logger.info(f"No filename suggested, using generated name: {suggested_filename}")
 
 					# Get content type and use it to determine proper extension
 					response = await download.page.request.head(download.url)
 					content_type = response.headers.get('content-type', '').lower()
-					logger.info(f"Content type detected: {content_type}")
 					
 					# Map content types to extensions
 					content_type_map = {
@@ -257,18 +266,15 @@ class BrowserContext:
 						if base_name.endswith('.tar'):  # Clean up .tar.gz cases
 							base_name = os.path.splitext(base_name)[0]
 						suggested_filename = f"{base_name}{extension}"
-						logger.info(f"Filename updated based on content type: {suggested_filename}")
 
 					# Create full path for the download
 					download_path = os.path.join(self.config.downloads_path, suggested_filename)
-					logger.info(f"Initial download path: {download_path}")
 
 					# Ensure unique filename
 					counter = 1
 					base_name, extension = os.path.splitext(download_path)
 					while os.path.exists(download_path):
 						download_path = f"{base_name}_{counter}{extension}"
-						logger.info(f"File exists, trying new path: {download_path}")
 						counter += 1
 
 					# Save the file

@@ -1,8 +1,9 @@
 [project]
-name = "browser-use"
-description = "Browser automation and interaction library"
+name = "OpenOperator"
+description = "Making LangGraph AI agents handle complex tasks in the browser. Forked from Browser-Use"
 authors = [
-    { name = "Gregor Zunic" }
+    { name = "Gregor Zunic" },
+    { name = "Nikita Shirobokov" }
 ]
 version = "0.1.26"
 readme = "README.md"
@@ -13,16 +14,11 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "MainContentExtractor>=0.0.4",
     "beautifulsoup4>=4.12.3",
     "httpx>=0.27.2",
     "pydantic>=2.10.4",
     "python-dotenv>=1.0.1",
-    "requests>=2.32.3",
     "playwright>=1.49.0",
-    "setuptools>=75.8.0",
-    "pytest>=8.3.4",
-    "posthog>=3.8.4",
     "pillow>=11.1.0",
     "langchain>=0.3.15",
     "langgraph>=0.2.66",
@@ -35,7 +31,8 @@ dev = [
     "hatch>=1.13.0",
     "build>=1.2.2",
     "pytest>=8.3.3",
-    "pytest-asyncio>=0.24.0"
+    "pytest-asyncio>=0.24.0",
+    "setuptools>=75.8.0"
 ]
 
 [tool.ruff]
@@ -52,3 +49,7 @@ docstring-code-format = true
 dev = [
     "ipykernel>=6.29.5",
 ]
+
+[project.urls]
+"Homepage" = "https://github.com/NickSherrow/openoperator"
+"Original Repository" = "https://github.com/browser-use/browser-use/"

@@ -4,7 +4,7 @@ from typing import Optional
 
 from playwright.async_api import Page
 
-from browser.dom.views import (
+from src.browser.dom.views import (
 	DOMBaseNode,
 	DOMElementNode,
 	DOMState,
