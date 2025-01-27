@@ -1,6 +1,6 @@
 # OpenOperator - Open-Source LLM Agent for Web Operations in Browser
 
-**OpenOperator** is an LLM agent that use web browser to complete tasks, originally based on [BrowserUse](https://github.com/browser-use/browser-use). This fork is mainly focused on moving the agent backend to [LangGraph](https://github.com/langgraph/langgraph) and [LangChain](https://github.com/langchain/langchain).
+**OpenOperator** is an LLM agent that uses web browser to complete tasks, originally based on [BrowserUse](https://github.com/browser-use/browser-use). This fork is mainly focused on moving the agent backend to [LangGraph](https://github.com/langgraph/langgraph) and [LangChain](https://github.com/langchain/langchain).
 
 ## Key Features
 
@@ -10,7 +10,7 @@
 
 3. **Use with your favorite LLM**: Supports any LLM that can handle tool calling and multimodal inputs.
 
-## Changes from [BrowserUse](https://github.com/browser-use/browser-use)-Use
+## Changes from [BrowserUse](https://github.com/browser-use/browser-use)
 
 1. **Refactored Agent Backbone**: Transitioned from vanilla Python to [LangGraph](https://github.com/langgraph/langgraph) and [LangChain](https://github.com/langchain/langchain).
 
@@ -22,12 +22,12 @@
 
 ## Why LangGraph and LangChain?
 
-Some developers say LangChain introduces unnecesary abstractions that add complexity to the project. However, each LLM-driven project, that is built in vanilla Python, eventually brings the same abstractions. It all starts with "Well, I'll just add this tiny little object to handle messages", and then you end up with some hardcore system design.
+Some developers say LangChain introduces unnecessary abstractions that add complexity to the project. However, each LLM-driven project that is built in vanilla Python eventually brings the same abstractions. It all starts with "Well, I'll just add this tiny little object to handle messages," and then you end up with some hardcore system design.
 
 LangGraph was picked as a backbone for this fork because:
-- it scales well. LangGraph is really good at parallelizing tasks, and completely solves race condition problems.
-- the LangGraph Server is a really good way to deploy your agent both for users and as a subagent for other LLM agents.
-- they have a huge community, they ship fast, their documentation is good, and they are used for applications in production.
+- It scales well. LangGraph is really good at parallelizing tasks and completely solves race condition problems.
+- The LangGraph Server is a really good way to deploy your agent both for users and as a subagent for other LLM agents.
+- They have a huge community, they ship fast, and their documentation is good.
 
 ## Prerequisites
 - LLM API compatible with LangChain
@@ -35,24 +35,18 @@ LangGraph was picked as a backbone for this fork because:
 
 ## Installation
 
-1. Install dependencies
-2. Install Playwright and drivers
-3. **Configure Environment Variables**
-
-   Create a `.env` file based on the provided `.env.example`, setting necessary configurations like API keys, model parameters, etc.
-
-   ```env
-   # Example .env content
-   OPENAI_API_KEY=your_api_key_here
-   BROWSER_USE_LOGGING_LEVEL=info
-   ```
+1. Clone the repository
+2. Install Playwright
+3. Create a `.env` file based on the provided `.env.example`, setting necessary configurations like API keys, model parameters, etc.
 
 ## Usage
+
+The current usage is limited to a single URL and a single data extraction task. However, all other tools are available to the agent, and just require you to modify the prompt and graph.
 
 After installation, you can start using OpenOperator by running the main agent script:
 
 ```bash
-uv run src/main.py
+uv run src/main.py --url <URL> --query <QUERY>
 ```
 
 This will initialize the agent, set up the browser context, and begin the workflow to extract data from specified websites.
@@ -61,7 +55,7 @@ This will initialize the agent, set up the browser context, and begin the workfl
 
 This project is a fork of [BrowserUse](https://github.com/browser-use/browser-use). It is a great project, and I'm grateful for the work done by the original authors. I hope this fork will help the original project with inspiration, ideas, and adoption.
 
-Playwright and Chromium is a killer combination for web automation.
+Playwright and Chromium are a killer combination for web automation.
 
 LangGraph and LangChain are a great way to build LLM agents.
 
@@ -71,7 +65,7 @@ MyPyPDF2 is a great way to handle PDF files.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request with your enhancements. Ensure that your code follows the project's coding standards and includes appropriate tests.
+Contributions are welcome! Please fork the repository and submit a pull request with your enhancements.
 
 ## License
 
