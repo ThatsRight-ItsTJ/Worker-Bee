@@ -23,6 +23,8 @@ from src.tools.browser_tools import (
 
 from src.tools.ops_tools import submit_result, think, raise_error
 
+from src.agent.graph import AgentWithBrowser
+
 __all__ = [
 	'Browser',
 	'BrowserConfig',
@@ -42,5 +44,6 @@ __all__ = [
 	'SelectDropdownOption',
 	'submit_result',
 	'think',
-	'raise_error'
+	'raise_error',
+	'AgentWithBrowser'
 ]

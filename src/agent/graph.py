@@ -188,3 +188,5 @@ async def shutdown(state: OverallState) -> Command[Literal[END]]: # type: ignore
 graph.set_entry_point("build_browser")
 graph.add_node("tools", tool_node)
 graph.add_edge("tools", "toolmessage_processor")
+
+AgentWithBrowser = graph
