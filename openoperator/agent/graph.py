@@ -21,18 +21,18 @@ from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 from langgraph.types import Command
 
-from src.agent.llm_clients import llm
-from src.agent.prompts.search_agent import REACT_PROMPT
-from src.agent.prompts.templates import (
+from openoperator.agent.llm_clients import llm
+from openoperator.agent.prompts.search_agent import REACT_PROMPT
+from openoperator.agent.prompts.templates import (
     CONCLUSIONS_TEMPLATE, 
     LOG_MESSAGE_TEMPLATE,
     PUNISHMENT_MESSAGE_TEMPLATE,
     USER_INPUT_TEMPLATE
 )
-from src.browser.browser import Browser
-from src.browser.context import BrowserContext, BrowserContextConfig
-from src.tools.browser_tools import ClickElement, GoBack, GoToUrl, InputText
-from src.tools.ops_tools import open_file, raise_error, submit_result, think
+from openoperator.browser.browser import Browser
+from openoperator.browser.context import BrowserContext, BrowserContextConfig
+from openoperator.tools.browser_tools import ClickElement, GoBack, GoToUrl, InputText
+from openoperator.tools.ops_tools import open_file, raise_error, submit_result, think
 
 logger = logging.getLogger(__name__)
 

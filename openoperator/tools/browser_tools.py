@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from typing import Type, Annotated
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, List, Tuple, Dict
-from src.browser.context import BrowserContext, BrowserState
+from openoperator.browser.context import BrowserContext, BrowserState
 
 from langchain_core.tools import BaseTool
 from langchain.callbacks.manager import CallbackManagerForToolRun

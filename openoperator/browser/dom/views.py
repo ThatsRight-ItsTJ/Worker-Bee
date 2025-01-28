@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from functools import cached_property
 from typing import TYPE_CHECKING, Dict, List, Optional
 
-from src.browser.dom.history_tree_processor.view import HashedDomElement
+from openoperator.browser.dom.history_tree_processor.view import HashedDomElement
 
 # Avoid circular import issues
 if TYPE_CHECKING:
@@ -72,7 +72,7 @@ class DOMElementNode(DOMBaseNode):
 
 	@cached_property
 	def hash(self) -> HashedDomElement:
-		from src.browser.dom.history_tree_processor.service import (
+		from openoperator.browser.dom.history_tree_processor.service import (
 			HistoryTreeProcessor,
 		)
 

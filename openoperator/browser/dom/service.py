@@ -4,7 +4,7 @@ from typing import Optional
 
 from playwright.async_api import Page
 
-from src.browser.dom.views import (
+from openoperator.browser.dom.views import (
 	DOMBaseNode,
 	DOMElementNode,
 	DOMState,
@@ -38,7 +38,7 @@ class DomService:
 		focus_element: int,
 		viewport_expansion: int,
 	) -> DOMElementNode:
-		js_code = resources.read_text('browser.dom', 'buildDomTree.js')
+		js_code = resources.read_text('openoperator.browser.dom', 'buildDomTree.js')
 
 		args = {
 			'doHighlightElements': highlight_elements,

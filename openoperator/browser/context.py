@@ -22,14 +22,14 @@ from playwright.async_api import (
 	Page,
 )
 
-from src.browser.views import BrowserError, BrowserState, TabInfo
-from src.browser.dom.service import DomService
-from src.browser.dom.views import DOMElementNode, SelectorMap
-from src.utils import time_execution_sync
-from src.browser.downloads import DownloadsRegistry, DownloadedItem
+from openoperator.browser.views import BrowserError, BrowserState, TabInfo
+from openoperator.browser.dom.service import DomService
+from openoperator.browser.dom.views import DOMElementNode, SelectorMap
+from openoperator.utils import time_execution_sync
+from openoperator.browser.downloads import DownloadsRegistry, DownloadedItem
 
 if TYPE_CHECKING:
-	from src.browser.browser import Browser
+	from openoperator.browser.browser import Browser
 
 logger = logging.getLogger(__name__)
 

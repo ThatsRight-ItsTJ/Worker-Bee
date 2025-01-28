@@ -1,11 +1,11 @@
-from src.logging_config import setup_logging
+from openoperator.logging_config import setup_logging
 
 setup_logging()
 
-from src.browser.browser import Browser as Browser
-from src.browser.browser import BrowserConfig as BrowserConfig
-from src.browser.dom.service import DomService as DomService
-from src.tools.browser_tools import (
+from openoperator.browser.browser import Browser as Browser
+from openoperator.browser.browser import BrowserConfig as BrowserConfig
+from openoperator.browser.dom.service import DomService as DomService
+from openoperator.tools.browser_tools import (
     SearchGoogle,
     GoToUrl,
     GoBack,
@@ -21,9 +21,9 @@ from src.tools.browser_tools import (
     SelectDropdownOption
 )
 
-from src.tools.ops_tools import submit_result, think, raise_error
+from openoperator.tools.ops_tools import submit_result, think, raise_error
 
-from src.agent.graph import AgentWithBrowser
+from openoperator.agent.graph import AgentWithBrowser
 
 __all__ = [
 	'Browser',

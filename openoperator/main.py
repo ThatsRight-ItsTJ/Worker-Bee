@@ -9,7 +9,7 @@ import logging
 
 from dotenv import load_dotenv
 
-from src.agent.graph import graph
+from openoperator.agent.graph import graph
 
 load_dotenv()
 
