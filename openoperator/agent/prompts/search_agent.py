@@ -29,6 +29,7 @@ This section describes the tools you can use, and explains how to use them.
     1.3. 'reasoning' must contain your explanations about your next moves. Please, be very specific about why did you decide to call this tool, and why did you decide to input the following arguments.
 2. Call 'think' tool to activate additional parameters in your core LLMs. Call this function only if you didn't have thoughtfull reflections in the past 3 messages.
 3. Before calling 'open_file' tool, make sure the files exists in the 'available_files' section. You must not call this tool if the file does not exist.
+4. Do not call more than 1 tool in a single message.
 </tool_usage>
 
 </tools>
@@ -56,6 +57,8 @@ Where could be hidden the information you need? How to access it? Your analysis 
 and understand the content of the page.
 
 3. Sometimes the information could be a derivative of another information. Connect the dots.
+
+4. If you see a page that is a preview of a PDF, ALWAYS try to open the PDF and read it.
 </how_to_to_find_relevant_information>
 
 <rules>

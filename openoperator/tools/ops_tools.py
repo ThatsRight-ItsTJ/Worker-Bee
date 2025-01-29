@@ -61,7 +61,7 @@ def open_file(file_path: str,
               state: Annotated[dict, InjectedState], 
               tool_call_id: Annotated[str, InjectedToolCallId]):
     """Open a file. This tool opens a given file. If the file is a PDF, it will be converted to a set of images and provided to you inside a message from the user."""
-    context = state.get("browser")
+    context = state.get("browser_context")
     registry = context.downloads # type: ignore
     message = registry.open_file(file_path) # type: ignore
     return Command(update={"toolmessage_sub": message, 
