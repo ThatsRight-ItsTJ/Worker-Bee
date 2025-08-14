@@ -1,0 +1,120 @@
+import json
+import logging
+from typing import Any, Dict, Iterator, List, Optional, Type
+
+import requests
+from langchain_core.callbacks import CallbackManagerForLLMRun
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
+from langchain_core.outputs import ChatGeneration, ChatResult
+from pydantic import Field
+
+logger = logging.getLogger(__name__)
+
+
+class PollinationsChatModel(BaseChatModel):
+    """Pollinations AI chat model using their OpenAI-compatible endpoint."""
+    
+    model_name: str = Field(default="openai", description="Model name to use")
+    base_url: str = Field(default="https://text.pollinations.ai/openai", description="Base URL for Pollinations API")
+    temperature: float = Field(default=0.7, description="Temperature for generation")
+    max_tokens: int = Field(default=1000, description="Maximum tokens to generate")
+    timeout: int = Field(default=60, description="Request timeout in seconds")
+    
+    @property
+    def _llm_type(self) -> str:
+        return "pollinations"
+    
+    def _convert_messages_to_pollinations_format(self, messages: List[BaseMessage]) -> List[Dict[str, Any]]:
+        """Convert LangChain messages to Pollinations format."""
+        converted = []
+        
+        for message in messages:
+            if isinstance(message, SystemMessage):
+                converted.append({"role": "system", "content": message.content})
+            elif isinstance(message, HumanMessage):
+                converted.append({"role": "user", "content": message.content})
+            elif isinstance(message, AIMessage):
+                converted.append({"role": "assistant", "content": message.content})
+            else:
+                # Fallback for other message types
+                converted.append({"role": "user", "content": str(message.content)})
+        
+        return converted
+    
+    def _generate(
+        self,
+        messages: List[BaseMessage],
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+        **kwargs: Any,
+    ) -> ChatResult:
+        """Generate a response using Pollinations API."""
+        
+        # Convert messages to Pollinations format
+        pollinations_messages = self._convert_messages_to_pollinations_format(messages)
+        
+        # Prepare request payload
+        payload = {
+            "model": self.model_name,
+            "messages": pollinations_messages,
+            "temperature": kwargs.get("temperature", self.temperature),
+            "max_tokens": kwargs.get("max_tokens", self.max_tokens),
+        }
+        
+        # Add stop sequences if provided
+        if stop:
+            payload["stop"] = stop
+        
+        try:
+            logger.debug(f"Making request to Pollinations API with payload: {json.dumps(payload, indent=2)}")
+            
+            response = requests.post(
+                self.base_url,
+                headers={"Content-Type": "application/json"},
+                json=payload,
+                timeout=self.timeout
+            )
+            response.raise_for_status()
+            
+            result = response.json()
+            logger.debug(f"Received response: {json.dumps(result, indent=2)}")
+            
+            # Extract content from response
+            if "choices" in result and len(result["choices"]) > 0:
+                content = result["choices"][0]["message"]["content"]
+                message = AIMessage(content=content)
+                generation = ChatGeneration(message=message)
+                return ChatResult(generations=[generation])
+            else:
+                raise ValueError(f"Unexpected response format: {result}")
+                
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Request to Pollinations API failed: {e}")
+            raise ValueError(f"Pollinations API request failed: {e}")
+        except Exception as e:
+            logger.error(f"Error processing Pollinations response: {e}")
+            raise ValueError(f"Error processing Pollinations response: {e}")
+    
+    def _stream(
+        self,
+        messages: List[BaseMessage],
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+        **kwargs: Any,
+    ) -> Iterator[ChatGeneration]:
+        """Stream responses from Pollinations API."""
+        # For now, fall back to non-streaming
+        # TODO: Implement streaming using Pollinations SSE endpoint
+        result = self._generate(messages, stop, run_manager, **kwargs)
+        yield result.generations[0]
+    
+    @property
+    def _identifying_params(self) -> Dict[str, Any]:
+        """Get identifying parameters."""
+        return {
+            "model_name": self.model_name,
+            "base_url": self.base_url,
+            "temperature": self.temperature,
+            "max_tokens": self.max_tokens,
+        }
