@@ -4,6 +4,7 @@ from openoperator.tools.pollinations.text_tool import PollinationsTextTool
 
 def test_vision_tool():
     """Test vision analysis on a sample screenshot"""
+    print("Testing Pollinations Vision Tool...")
     vision_tool = PollinationsVisionTool()
     
     # Assuming you have a test screenshot
@@ -23,11 +24,12 @@ def test_vision_tool():
         print(f"Testing with image: {test_image}")
         result = vision_tool._run(
             image_path=test_image,
-            query="Describe what you see in this image",
+            query="Describe what you see in this image. What are the main visual elements?",
             model="openai"
         )
         print("Vision Analysis Result:")
         print(result)
+        print("-" * 50)
     else:
         print("No test image found. Available images should be:")
         for img_path in test_images:
@@ -45,6 +47,7 @@ def test_vision_tool():
 
 def test_text_tool():
     """Test text generation"""
+    print("Testing Pollinations Text Tool...")
     text_tool = PollinationsTextTool()
     
     result = text_tool._run(
@@ -53,7 +56,13 @@ def test_text_tool():
     )
     print("Text Generation Result:")
     print(result)
+    print("-" * 50)
 
 if __name__ == "__main__":
+    print("Starting Pollinations AI Integration Tests")
+    print("=" * 60)
     test_vision_tool()
+    print()
     test_text_tool()
+    print("=" * 60)
+    print("Tests completed!")
