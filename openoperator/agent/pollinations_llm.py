@@ -1,13 +1,15 @@
 import json
 import logging
 import os
-from typing import Any, Dict, Iterator, List, Optional, Type
+from typing import Any, Dict, Iterator, List, Optional, Type, Sequence
 
 import requests
 from langchain_core.callbacks import CallbackManagerForLLMRun
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
+from langchain_core.tools import BaseTool
+from langchain_core.utils.function_calling import convert_to_openai_tool
 from pydantic import Field
 
 logger = logging.getLogger(__name__)
@@ -23,6 +25,7 @@ class PollinationsChatModel(BaseChatModel):
     timeout: int = Field(default=60, description="Request timeout in seconds")
     api_key: Optional[str] = Field(default=None, description="Optional Pollinations API key")
     referrer: Optional[str] = Field(default=None, description="Optional referrer for authentication")
+    bound_tools: List[Dict[str, Any]] = Field(default_factory=list, description="Tools bound to this model")
     
     def __init__(self, **kwargs):
         # Auto-load from environment if not provided
@@ -35,6 +38,45 @@ class PollinationsChatModel(BaseChatModel):
     @property
     def _llm_type(self) -> str:
         return "pollinations"
+    
+    def bind_tools(
+        self,
+        tools: Sequence[BaseTool],
+        **kwargs: Any,
+    ) -> "PollinationsChatModel":
+        """Bind tools to the model for function calling."""
+        formatted_tools = []
+        for tool in tools:
+            if hasattr(tool, 'args_schema') and tool.args_schema:
+                # Convert LangChain tool to OpenAI format
+                openai_tool = convert_to_openai_tool(tool)
+                formatted_tools.append(openai_tool)
+            else:
+                # Fallback for tools without proper schema
+                formatted_tools.append({
+                    "type": "function",
+                    "function": {
+                        "name": tool.name,
+                        "description": tool.description,
+                        "parameters": {
+                            "type": "object",
+                            "properties": {},
+                            "required": []
+                        }
+                    }
+                })
+        
+        return self.__class__(
+            model_name=self.model_name,
+            base_url=self.base_url,
+            temperature=self.temperature,
+            max_tokens=self.max_tokens,
+            timeout=self.timeout,
+            api_key=self.api_key,
+            referrer=self.referrer,
+            bound_tools=formatted_tools,
+            **kwargs
+        )
     
     def _convert_messages_to_pollinations_format(self, messages: List[BaseMessage]) -> List[Dict[str, Any]]:
         """Convert LangChain messages to Pollinations format."""
