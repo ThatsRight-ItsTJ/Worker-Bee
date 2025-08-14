@@ -1,7 +1,7 @@
 import requests
 import base64
 import json
-from typing import Optional
+from typing import Optional, Type
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
 
@@ -11,12 +11,12 @@ class PollinationsVisionInput(BaseModel):
     model: str = Field(default="openai", description="Vision model to use (openai, sur, gemini)")
 
 class PollinationsVisionTool(BaseTool):
-    name = "pollinations_vision"
-    description = """
+    name: str = "pollinations_vision"
+    description: str = """
     Analyze screenshots and images to understand web page content, UI elements, 
     forms, buttons, text, and layout. Perfect for web automation tasks.
     """
-    args_schema = PollinationsVisionInput
+    args_schema: Type[BaseModel] = PollinationsVisionInput
     
     def _run(self, image_path: str, query: str, model: str = "openai") -> str:
         """Execute vision analysis using Pollinations API"""

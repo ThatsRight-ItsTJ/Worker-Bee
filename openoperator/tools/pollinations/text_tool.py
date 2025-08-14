@@ -1,5 +1,5 @@
 import requests
-from typing import Optional
+from typing import Optional, Type
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
 
@@ -9,12 +9,12 @@ class PollinationsTextInput(BaseModel):
     system_prompt: str = Field(default="You are a helpful assistant.", description="System prompt")
 
 class PollinationsTextTool(BaseTool):
-    name = "pollinations_text"
-    description = """
+    name: str = "pollinations_text"
+    description: str = """
     Generate text responses using Pollinations AI models. Can be used for 
     reasoning, planning, or generating responses when primary LLM is unavailable.
     """
-    args_schema = PollinationsTextInput
+    args_schema: Type[BaseModel] = PollinationsTextInput
     
     def _run(self, prompt: str, model: str = "openai", system_prompt: str = "You are a helpful assistant.") -> str:
         """Execute text generation using Pollinations API"""
