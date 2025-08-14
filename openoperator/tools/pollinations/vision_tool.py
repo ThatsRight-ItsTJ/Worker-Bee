@@ -1,6 +1,7 @@
 import requests
 import base64
 import json
+import os
 from typing import Optional, Type
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
@@ -21,6 +22,10 @@ class PollinationsVisionTool(BaseTool):
     def _run(self, image_path: str, query: str, model: str = "openai") -> str:
         """Execute vision analysis using Pollinations API"""
         try:
+            # Get authentication from environment
+            api_key = os.getenv('POLLINATIONS_API_KEY')
+            referrer = os.getenv('POLLINATIONS_REFERRER')
+            
             # Encode image to base64
             with open(image_path, "rb") as image_file:
                 image_b64 = base64.b64encode(image_file.read()).decode('utf-8')
@@ -48,7 +53,15 @@ class PollinationsVisionTool(BaseTool):
                 "max_tokens": 500
             }
             
+            # Add authentication if available
+            if referrer:
+                payload["referrer"] = referrer
+            
             headers = {"Content-Type": "application/json"}
+            
+            # Add API key authentication if available
+            if api_key:
+                headers["Authorization"] = f"Bearer {api_key}"
             
             response = requests.post(
                 "https://text.pollinations.ai/openai",

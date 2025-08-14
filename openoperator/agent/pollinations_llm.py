@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from typing import Any, Dict, Iterator, List, Optional, Type
 
 import requests
@@ -20,6 +21,16 @@ class PollinationsChatModel(BaseChatModel):
     temperature: float = Field(default=0.7, description="Temperature for generation")
     max_tokens: int = Field(default=1000, description="Maximum tokens to generate")
     timeout: int = Field(default=60, description="Request timeout in seconds")
+    api_key: Optional[str] = Field(default=None, description="Optional Pollinations API key")
+    referrer: Optional[str] = Field(default=None, description="Optional referrer for authentication")
+    
+    def __init__(self, **kwargs):
+        # Auto-load from environment if not provided
+        if 'api_key' not in kwargs:
+            kwargs['api_key'] = os.getenv('POLLINATIONS_API_KEY')
+        if 'referrer' not in kwargs:
+            kwargs['referrer'] = os.getenv('POLLINATIONS_REFERRER')
+        super().__init__(**kwargs)
     
     @property
     def _llm_type(self) -> str:
@@ -65,13 +76,23 @@ class PollinationsChatModel(BaseChatModel):
         # Add stop sequences if provided
         if stop:
             payload["stop"] = stop
+            
+        # Add authentication if available
+        if self.referrer:
+            payload["referrer"] = self.referrer
+        
+        headers = {"Content-Type": "application/json"}
+        
+        # Add API key authentication if available
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
         
         try:
             logger.debug(f"Making request to Pollinations API with payload: {json.dumps(payload, indent=2)}")
             
             response = requests.post(
                 self.base_url,
-                headers={"Content-Type": "application/json"},
+                headers=headers,
                 json=payload,
                 timeout=self.timeout
             )

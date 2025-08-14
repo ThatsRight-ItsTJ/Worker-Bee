@@ -1,4 +1,5 @@
 import requests
+import os
 from typing import Optional, Type
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
@@ -19,6 +20,10 @@ class PollinationsTextTool(BaseTool):
     def _run(self, prompt: str, model: str = "openai", system_prompt: str = "You are a helpful assistant.") -> str:
         """Execute text generation using Pollinations API"""
         try:
+            # Get authentication from environment
+            api_key = os.getenv('POLLINATIONS_API_KEY')
+            referrer = os.getenv('POLLINATIONS_REFERRER')
+            
             # OpenAI-compatible format
             payload = {
                 "model": model,
@@ -29,9 +34,19 @@ class PollinationsTextTool(BaseTool):
                 "max_tokens": 1000
             }
             
+            # Add authentication if available
+            if referrer:
+                payload["referrer"] = referrer
+            
+            headers = {"Content-Type": "application/json"}
+            
+            # Add API key authentication if available
+            if api_key:
+                headers["Authorization"] = f"Bearer {api_key}"
+            
             response = requests.post(
                 "https://text.pollinations.ai/openai",
-                headers={"Content-Type": "application/json"},
+                headers=headers,
                 json=payload,
                 timeout=30
             )
