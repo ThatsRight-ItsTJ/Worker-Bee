@@ -68,3 +68,4 @@ uv.lock
 # Local development
 .env.local
 .env.*.local
+=0.2.66
