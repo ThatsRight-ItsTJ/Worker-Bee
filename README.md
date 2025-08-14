@@ -225,10 +225,20 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgements
 
-- **Fork of OpenOperator by NickSherrow** - Original browser automation foundation
+- **Fork of OpenOperator by NickSherrow** - Original LangChain implementation
 - **Pollinations AI** - Free vision and text generation capabilities
 - **LangChain** - AI workflow orchestration framework
-- **Browser Use** - Web browser automation capabilities
+- **Browser Use** - Original browser automation foundation
+
+This project is a fork of [BrowserUse](https://github.com/browser-use/browser-use). It is a great project, and I'm grateful for the work done by the original authors. I hope this fork will help the original project with inspiration, ideas, and adoption.
+
+Playwright and Chromium are a killer combination for web automation.
+
+LangGraph and LangChain are a great way to build LLM agents.
+
+LangSmith is a great way to observability.
+
+MyPyPDF2 is a great way to handle PDF files.
 
 ---
 
