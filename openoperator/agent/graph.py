@@ -33,6 +33,8 @@ from openoperator.browser.browser import Browser
 from openoperator.browser.context import BrowserContext, BrowserContextConfig
 from openoperator.tools.browser_tools import ClickElement, GoBack, GoToUrl, InputText
 from openoperator.tools.ops_tools import open_file, raise_error, submit_result, think
+from openoperator.tools.pollinations.vision_tool import PollinationsVisionTool
+from openoperator.tools.pollinations.text_tool import PollinationsTextTool
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +65,9 @@ tools = [GoToUrl(),
          submit_result, 
          think, 
          raise_error, 
-         open_file]
+         open_file,
+         PollinationsVisionTool(),
+         PollinationsTextTool()]
 
 tool_node = ToolNode(tools)
 
