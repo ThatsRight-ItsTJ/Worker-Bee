@@ -6,12 +6,12 @@ requests>=2.31.0
 python-dotenv>=1.0.0
 
 # Browser automation
-browser-use>=1.0.0
+browser-use
 playwright>=1.40.0
 
 # Optional: Azure OpenAI support
 openai>=1.0.0
-azure-openai>=1.0.0
+azure-identity>=1.12.0
 
 # Optional: Other model providers
 anthropic>=0.8.0
