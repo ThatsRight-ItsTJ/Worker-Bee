@@ -7,8 +7,20 @@ def test_vision_tool():
     vision_tool = PollinationsVisionTool()
     
     # Assuming you have a test screenshot
-    test_image = "https://raw.githubusercontent.com/ThatsRight-ItsTJ/Worker-Bee/refs/heads/main/realistic-ferret-t-shirt-design-449cf9.jpeg"
-    if os.path.exists(test_image):
+    test_images = [
+        "realistic-ferret-t-shirt-design-449cf9.jpeg",
+        "public/images/screenshot.jpg", 
+        "public/images/image.jpg"
+    ]
+    
+    test_image = None
+    for img_path in test_images:
+        if os.path.exists(img_path):
+            test_image = img_path
+            break
+    
+    if test_image:
+        print(f"Testing with image: {test_image}")
         result = vision_tool._run(
             image_path=test_image,
             query="Describe what you see in this image",
@@ -17,7 +29,19 @@ def test_vision_tool():
         print("Vision Analysis Result:")
         print(result)
     else:
-        print("No test image found")
+        print("No test image found. Available images should be:")
+        for img_path in test_images:
+            print(f"  - {img_path}")
+        print("Creating a simple test...")
+        
+        # Test with a simple prompt instead
+        text_tool = PollinationsTextTool()
+        result = text_tool._run(
+            prompt="Describe what elements you would typically find on a web page screenshot",
+            model="openai"
+        )
+        print("Alternative test result:")
+        print(result)
 
 def test_text_tool():
     """Test text generation"""
