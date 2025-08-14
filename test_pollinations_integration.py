@@ -7,7 +7,7 @@ def test_vision_tool():
     vision_tool = PollinationsVisionTool()
     
     # Assuming you have a test screenshot
-    test_image = "/images/screenshot.jpg"
+    test_image = "https://raw.githubusercontent.com/ThatsRight-ItsTJ/Worker-Bee/refs/heads/main/realistic-ferret-t-shirt-design-449cf9.jpeg"
     if os.path.exists(test_image):
         result = vision_tool._run(
             image_path=test_image,
