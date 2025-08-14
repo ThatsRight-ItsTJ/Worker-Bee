@@ -1,72 +1,235 @@
-# OpenOperator - Open-Source LLM Agent for Web Operations in Browser
+# Worker-Bee 🐝
 
-**OpenOperator** is an LLM agent that uses web browser to complete tasks, originally based on [BrowserUse](https://github.com/browser-use/browser-use). This fork is mainly focused on moving the agent backend to [LangGraph](https://github.com/langgraph/langgraph) and [LangChain](https://github.com/langchain/langchain).
+A powerful web automation agent that combines browser automation with AI-powered vision and text generation capabilities. Worker-Bee can navigate websites, analyze visual content, and perform complex web tasks using multiple AI models.
 
-## Key Features
+## Features
 
-1. **Vision-Based Navigation**: The agent fully relies on vision inputs to navigate web pages. Vision-first approach gives predictable results even with JS-heavy websites.
+- 🤖 **AI-Powered Web Automation** - Intelligent browser control with natural language commands
+- 👁️ **Free Vision Analysis** - Analyze screenshots and web content using Pollinations AI (no OpenAI costs!)
+- 📝 **Multi-Model Text Generation** - Support for OpenAI, Gemini, Sur AI, and DeepSeek models
+- 🔄 **LangChain Integration** - Built on LangChain/LangGraph for robust AI workflows
+- 💰 **Cost-Effective** - Free alternatives to expensive OpenAI Vision API calls
+- 🚫 **No Rate Limits** - Unlimited usage with Pollinations AI
+- 🛠️ **Extensible** - Easy to add new tools and capabilities
 
-2. **File Handling**: Introduced file handling capabilities, currently supporting PDF files. With vision-driven reasoning, the agent uses universal workflow to access and read data with any layout.
+## Quick Start
 
-3. **Use with your favorite LLM**: Supports any LLM that can handle tool calling and multimodal inputs.
+### Prerequisites
 
-## Changes from [BrowserUse](https://github.com/browser-use/browser-use)
+- Python 3.8+
+- Node.js (for browser automation)
+- Git
 
-1. **Refactored Agent Backbone**: Transitioned from vanilla Python to [LangGraph](https://github.com/langgraph/langgraph) and [LangChain](https://github.com/langchain/langchain).
+### Installation
 
-2. **Moved to Full-Page Viewport**: Implements full-page screenshots to minimize the need for scrolling tools.
+1. **Clone the repository:**
+```bash
+git clone https://github.com/ThatsRight-ItsTJ/Worker-Bee.git
+cd Worker-Bee
+```
 
-4. **Added File Handling**: Currently supports only PDF, but adding handlers is easy.
+2. **Install Python dependencies:**
+```bash
+pip install -r requirements.txt
+```
 
-5. **Adjustable Focus**: Agent architecture lets you adjust prompts for task categories (i.e. "shopping", "searching", "applying", etc.). Current version is focused on finding answers on given websites, generalist mode is coming soon.
+3. **Set up environment variables:**
+```bash
+cp .env.example .env
+```
 
-## Why LangGraph and LangChain?
+4. **Configure your `.env` file:**
+```env
+# Required: Your AI model configuration
+MODEL=gpt-4o
+MODEL_PROVIDER=azure  # or openai, anthropic, etc.
+AZURE_OPENAI_API_KEY=your_key_here
+AZURE_OPENAI_ENDPOINT=your_endpoint_here
 
-Some developers say LangChain introduces unnecessary abstractions that add complexity to the project. However, each LLM-driven project that is built in vanilla Python eventually brings the same abstractions. It all starts with "Well, I'll just add this tiny little object to handle messages," and then you end up with some hardcore system design.
+# Optional: Pollinations AI (for free vision and text)
+POLLINATIONS_API_KEY=your_pollinations_key  # Optional
+POLLINATIONS_REFERRER=worker-bee-v1
 
-LangGraph was picked as a backbone for this fork because:
-- It scales well. LangGraph is really good at parallelizing tasks and completely solves race condition problems.
-- The LangGraph Server is a really good way to deploy your agent both for users and as a subagent for other LLM agents.
-- They have a huge community, they ship fast, and their documentation is good.
+# Optional: LangChain tracing
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=your_langchain_key
+LANGCHAIN_PROJECT=worker-bee
 
-## Prerequisites
-- LLM API compatible with LangChain
-- LangSmith account if you want observability (free for small projects)
+# Logging level
+BROWSER_USE_LOGGING_LEVEL=info
+```
 
-## Installation
+## Setup Instructions
 
-1. Clone the repository
-2. Install Playwright
-3. Create a `.env` file based on the provided `.env.example`, setting necessary configurations like API keys, model parameters, etc.
+### Setting up Pollinations AI (Free Vision & Text)
+
+1. **Get a Pollinations API key** (optional but recommended):
+   - Visit [Pollinations AI](https://pollinations.ai/)
+   - Sign up for an account
+   - Generate an API key
+   - Add it to your `.env` file as `POLLINATIONS_API_KEY`
+
+2. **Pollinations provides:**
+   - Free image analysis and vision capabilities
+   - Multiple AI models (OpenAI, Gemini, Sur AI, DeepSeek)
+   - No rate limits
+   - Cost-effective alternative to OpenAI Vision API
+
+### Setting up LangChain (Optional Tracing)
+
+1. **Create a LangChain account:**
+   - Visit [LangSmith](https://smith.langchain.com/)
+   - Sign up for an account
+   - Create a new project
+   - Get your API key
+
+2. **Add to your `.env` file:**
+```env
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=your_langchain_key
+LANGCHAIN_PROJECT=your_project_name
+```
+
+3. **Benefits of LangChain tracing:**
+   - Monitor AI agent performance
+   - Debug complex workflows
+   - Track token usage and costs
+   - Analyze conversation flows
 
 ## Usage
 
-The current usage is limited to a single URL and a single data extraction task. However, all other tools are available to the agent, and just require you to modify the prompt and graph.
+### Basic Web Automation
 
-After installation, you can start using OpenOperator by running the main agent script:
+```python
+from openoperator import OpenOperator
 
-```bash
-uv run src/main.py --url <URL> --query <QUERY>
+# Initialize the agent
+agent = OpenOperator()
+
+# Perform web automation tasks
+result = agent.run("Navigate to example.com and take a screenshot")
+print(result)
 ```
 
-This will initialize the agent, set up the browser context, and begin the workflow to extract data from specified websites.
+### Using Vision Analysis
 
-## Acknowledgements
+```python
+from openoperator.tools.pollinations import PollinationsVisionTool
 
-This project is a fork of [BrowserUse](https://github.com/browser-use/browser-use). It is a great project, and I'm grateful for the work done by the original authors. I hope this fork will help the original project with inspiration, ideas, and adoption.
+# Initialize vision tool
+vision_tool = PollinationsVisionTool()
 
-Playwright and Chromium are a killer combination for web automation.
+# Analyze an image
+result = vision_tool._run(
+    image_url="/images/image.jpg",
+    query="What do you see in this image?"
+)
+print(result)
+```
 
-LangGraph and LangChain are a great way to build LLM agents.
+### Using Text Generation
 
-LangSmith is a great way to observability.
+```python
+from openoperator.tools.pollinations import PollinationsTextTool
 
-MyPyPDF2 is a great way to handle PDF files.
+# Initialize text tool
+text_tool = PollinationsTextTool()
+
+# Generate text
+result = text_tool._run(
+    prompt="Write a summary of web automation benefits",
+    model="openai"  # or "gemini", "sur-ai", "deepseek"
+)
+print(result)
+```
+
+### Advanced Usage with Custom Workflows
+
+```python
+from openoperator.examples.pollinations_integration_example import run_example
+
+# Run the comprehensive example
+await run_example()
+```
+
+## Testing
+
+Run the integration test to verify everything is working:
+
+```bash
+python test_pollinations_integration.py
+```
+
+This will test:
+- Pollinations vision analysis
+- Text generation capabilities
+- Error handling
+- Multiple AI model support
+
+## Project Structure
+
+```
+Worker-Bee/
+├── openoperator/
+│   ├── agent/              # Core agent logic
+│   ├── tools/
+│   │   └── pollinations/   # Pollinations AI tools
+│   ├── utils/              # Helper utilities
+│   └── examples/           # Usage examples
+├── tests/                  # Test files
+├── .env.example           # Environment template
+└── README.md              # This file
+```
+
+## Key Components
+
+- **PollinationsVisionTool**: Free image analysis and visual understanding
+- **PollinationsTextTool**: Multi-model text generation
+- **Vision Queries**: Predefined templates for common vision tasks
+- **Helper Utilities**: Retry logic and error handling for API calls
+
+## Cost Savings
+
+Worker-Bee can significantly reduce your AI automation costs:
+
+- **OpenAI Vision API**: ~$0.00765 per image
+- **Pollinations Vision**: FREE
+- **Estimated savings**: 100% on vision-related tasks
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request with your enhancements.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Authentication errors**: Check your API keys in `.env`
+2. **Browser automation fails**: Ensure Node.js is installed
+3. **Vision analysis errors**: Verify Pollinations API key (optional) or check internet connection
+4. **Model not responding**: Verify your MODEL_PROVIDER configuration
+
+### Getting Help
+
+- Check the [examples](openoperator/examples/) directory
+- Run the test script: `python test_pollinations_integration.py`
+- Review error logs with `BROWSER_USE_LOGGING_LEVEL=debug`
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgements
+
+- **Fork of OpenOperator by NickSherrow** - Original browser automation foundation
+- **Pollinations AI** - Free vision and text generation capabilities
+- **LangChain** - AI workflow orchestration framework
+- **Browser Use** - Web browser automation capabilities
+
+---
+
+Made with ❤️ for the open source community. Star ⭐ this repo if you find it useful!
