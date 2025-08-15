@@ -72,7 +72,7 @@ GROQ_API_KEY=your_groq_key
 
 1. **Bolt automatically runs the build command**:
    ```bash
-   pip install -r requirements.txt && 
+   python -m pip install -r requirements.txt && 
    python -m playwright install chromium && 
    python -m playwright install-deps && 
    cd openoperator-ui && 

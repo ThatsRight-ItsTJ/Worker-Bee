@@ -20,7 +20,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir -r requirements.txt
 
 # Install Playwright browsers
 RUN python -m playwright install chromium

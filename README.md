@@ -47,7 +47,7 @@ cd Worker-Bee
 
 2. **Install Python dependencies:**
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 3. **Install Playwright browsers:**

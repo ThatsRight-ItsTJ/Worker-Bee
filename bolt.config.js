@@ -1,7 +1,7 @@
 export default {
   // Build configuration
   build: {
-    command: "pip install --no-cache-dir -r requirements.txt && python -m playwright install chromium && python -m playwright install-deps && cd openoperator-ui && npm install && npm run build",
+    command: "python -m pip install --no-cache-dir -r requirements.txt && python -m playwright install chromium && python -m playwright install-deps && cd openoperator-ui && npm install && npm run build",
     output: "openoperator-ui/dist",
     env: {
       PYTHONPATH: "/app",
