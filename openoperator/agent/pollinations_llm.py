@@ -157,9 +157,30 @@ class PollinationsChatModel(BaseChatModel):
                 # Handle tool calls if present
                 if "tool_calls" in message_data and message_data["tool_calls"]:
                     logger.debug(f"Tool calls detected: {message_data['tool_calls']}")
+                    
+                    # Convert OpenAI format tool calls to LangChain format
+                    langchain_tool_calls = []
+                    for tool_call in message_data["tool_calls"]:
+                        # OpenAI format: {"id": "...", "type": "function", "function": {"name": "...", "arguments": "..."}}
+                        # LangChain format: {"name": "...", "args": {...}, "id": "..."}
+                        if tool_call.get("type") == "function" and "function" in tool_call:
+                            function_data = tool_call["function"]
+                            try:
+                                # Parse arguments JSON string to dict
+                                args = json.loads(function_data.get("arguments", "{}"))
+                            except json.JSONDecodeError:
+                                logger.warning(f"Failed to parse tool arguments: {function_data.get('arguments')}")
+                                args = {}
+                            
+                            langchain_tool_calls.append({
+                                "name": function_data.get("name"),
+                                "args": args,
+                                "id": tool_call.get("id", "")
+                            })
+                    
                     message = AIMessage(
                         content=message_data.get("content", ""),
-                        tool_calls=message_data["tool_calls"]
+                        tool_calls=langchain_tool_calls
                     )
                 else:
                     content = message_data.get("content", "")
