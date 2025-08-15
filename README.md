@@ -36,11 +36,13 @@ pip install -r requirements.txt
 3. **Install Playwright browsers:**
 ```bash
 playwright install
+# OR if that doesn't work:
+python -m playwright install
 
 # If you get dependency warnings on Linux, also run:
-sudo playwright install-deps
+python -m playwright install-deps
 # OR on Ubuntu/Debian:
-sudo apt-get install libavif16
+sudo apt-get install libavif16 libnss3 libatk-bridge2.0-0 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2
 ```
 
 4. **Set up environment variables:**

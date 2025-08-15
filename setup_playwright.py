@@ -25,8 +25,8 @@ def main():
     
     # Check if playwright is installed
     try:
-        import playwright
-        print(f"✅ Playwright {playwright.__version__} is installed")
+        from playwright import __version__ as playwright_version
+        print(f"✅ Playwright {playwright_version} is installed")
     except ImportError:
         print("❌ Playwright not found. Please install requirements first:")
         print("   pip install -r requirements.txt")
@@ -54,10 +54,10 @@ def main():
         try:
             response = input("\nTry to install system dependencies now? (y/N): ").strip().lower()
             if response in ['y', 'yes']:
-                success = run_command("sudo playwright install-deps", "Installing system dependencies")
+                success = run_command("python -m playwright install-deps", "Installing system dependencies")
                 if not success:
                     print("⚠️  System dependency installation failed. You may need to run manually:")
-                    print("   sudo apt-get install libavif16")
+                    print("   sudo apt-get install libavif16 libnss3 libatk-bridge2.0-0 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2")
         except KeyboardInterrupt:
             print("\n⏭️  Skipping system dependencies installation")
     
