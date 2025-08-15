@@ -23,7 +23,11 @@ function App() {
 
     try {
       // This would call your Python backend
-      const response = await fetch('/api/analyze', {
+      const apiUrl = import.meta.env.PROD 
+        ? '/api/analyze' 
+        : 'http://localhost:5000/api/analyze';
+        
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

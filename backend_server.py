@@ -11,6 +11,10 @@ from flask_cors import CORS
 import sys
 import os
 
+# Get port from environment variable (for deployment)
+PORT = int(os.environ.get('PORT', 5000))
+HOST = os.environ.get('HOST', '0.0.0.0')
+
 # Add the project root to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -21,6 +25,16 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+# Serve static files from the built frontend
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_frontend(path):
+    """Serve the React frontend"""
+    if path != "" and os.path.exists(os.path.join('openoperator-ui/dist', path)):
+        return send_from_directory('openoperator-ui/dist', path)
+    else:
+        return send_from_directory('openoperator-ui/dist', 'index.html')
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -119,4 +133,4 @@ if __name__ == '__main__':
     logger.info(f"Model: {os.getenv('MODEL')}")
     logger.info(f"Provider: {os.getenv('MODEL_PROVIDER')}")
     
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host=HOST, port=PORT, debug=False)

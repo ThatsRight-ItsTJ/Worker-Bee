@@ -1,0 +1,32 @@
+{
+  "name": "openoperator-web-app",
+  "version": "1.0.0",
+  "description": "AI-powered web automation and information extraction",
+  "main": "server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "python backend_server.py",
+    "dev:frontend": "cd openoperator-ui && npm run dev",
+    "build": "cd openoperator-ui && npm install && npm run build",
+    "start": "python backend_server.py",
+    "install:frontend": "cd openoperator-ui && npm install",
+    "setup": "pip install -r requirements.txt && npm run install:frontend && python -m playwright install"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0",
+    "python": ">=3.8.0"
+  },
+  "keywords": [
+    "ai",
+    "web-automation",
+    "browser-automation",
+    "langchain",
+    "playwright"
+  ],
+  "author": "OpenOperator Team",
+  "license": "MIT"
+}
