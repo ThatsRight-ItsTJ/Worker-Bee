@@ -33,19 +33,31 @@ def setup_environment():
 
 def check_requirements():
     """Check if all required environment variables are set"""
-    required_vars = ["MODEL", "MODEL_PROVIDER"]
+    # Only MODEL_PROVIDER is truly required, MODEL has a default
+    required_vars = ["MODEL_PROVIDER"]
     missing_vars = [var for var in required_vars if not os.getenv(var)]
     
     if missing_vars:
         logger.error(f"❌ Missing required environment variables: {', '.join(missing_vars)}")
-        logger.error("Please set these in your Bolt environment variables:")
-        logger.error("- MODEL=gpt-4o")
-        logger.error("- MODEL_PROVIDER=azure")
-        logger.error("- AZURE_OPENAI_API_KEY=your_key")
-        logger.error("- AZURE_OPENAI_ENDPOINT=your_endpoint")
+        logger.error("For Pollinations (recommended free option), set:")
+        logger.error("- MODEL_PROVIDER=pollinations")
+        logger.error("- MODEL=openai (or gemini, sur, deepseek)")
+        logger.error("- POLLINATIONS_REFERRER=worker-bee-bolt-v1")
         sys.exit(1)
     
-    logger.info(f"✅ Using model: {os.getenv('MODEL')} with provider: {os.getenv('MODEL_PROVIDER')}")
+    model = os.getenv('MODEL', 'openai')
+    provider = os.getenv('MODEL_PROVIDER')
+    logger.info(f"✅ Using model: {model} with provider: {provider}")
+    
+    if provider == 'pollinations':
+        logger.info("🌸 Using Pollinations AI - Free and unlimited!")
+        referrer = os.getenv('POLLINATIONS_REFERRER', 'worker-bee-bolt-v1')
+        logger.info(f"📝 Referrer: {referrer}")
+        api_key = os.getenv('POLLINATIONS_API_KEY')
+        if api_key:
+            logger.info("🔑 Using Pollinations API key for enhanced features")
+        else:
+            logger.info("🆓 Using free Pollinations access (no API key required)")
 
 def main():
     """Main startup function"""

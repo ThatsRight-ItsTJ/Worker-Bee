@@ -22,15 +22,25 @@ export default {
   env: {
     // Required environment variables
     MODEL: {
-      description: "AI model to use (e.g., gpt-4o)",
-      required: true
+      description: "AI model to use (e.g., openai, gemini, sur, deepseek)",
+      default: "openai"
     },
     MODEL_PROVIDER: {
-      description: "AI model provider (e.g., azure, openai, pollinations)",
-      required: true
+      description: "AI model provider (pollinations recommended for free usage)",
+      default: "pollinations"
     },
     
-    // Optional environment variables
+    // Pollinations configuration (recommended)
+    POLLINATIONS_API_KEY: {
+      description: "Pollinations API key (optional - provides higher rate limits)",
+      required: true
+    },
+    POLLINATIONS_REFERRER: {
+      description: "Pollinations referrer for authentication",
+      default: "worker-bee-bolt-v1"
+    },
+    
+    // Alternative providers (optional)
     AZURE_OPENAI_API_KEY: {
       description: "Azure OpenAI API key",
       required: false
