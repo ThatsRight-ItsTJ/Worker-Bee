@@ -9,44 +9,46 @@
   max-width: 1200px;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar with bee theme */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #fef3c7;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: linear-gradient(to bottom, #f59e0b, #d97706);
+  border-radius: 6px;
+  border: 2px solid #fef3c7;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: linear-gradient(to bottom, #d97706, #b45309);
 }
 
 /* Smooth transitions */
 * {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Focus styles */
+/* Focus styles with bee theme */
 input:focus,
 textarea:focus,
 button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 
-/* Loading animation */
+/* Enhanced loading animation */
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.6;
   }
 }
 
@@ -54,13 +56,51 @@ button:focus {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Hover effects */
+/* Floating animation for decorative elements */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Hover effects with bee theme */
 .hover-lift {
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(245, 158, 11, 0.2);
+}
+
+/* Bee-themed gradient backgrounds */
+.bg-honey-gradient {
+  background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 50%, #f59e0b 100%);
+}
+
+.bg-flower-gradient {
+  background: linear-gradient(135deg, #fef7ed 0%, #fed7aa 50%, #fb923c 100%);
+}
+
+/* Custom border styles */
+.border-honey {
+  border-color: #f59e0b;
+}
+
+.border-pollen {
+  border-color: #fcd34d;
+}
+
+/* Text shadows for better readability */
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive design */
@@ -73,4 +113,46 @@ button:focus {
   .grid-cols-1.md\:grid-cols-2 {
     grid-template-columns: 1fr;
   }
+  
+  /* Hide some decorative bees on mobile */
+  .fixed.inset-0 > div:nth-child(n+3) {
+    display: none;
+  }
+}
+
+/* Special animations for bee elements */
+@keyframes buzz {
+  0%, 100% {
+    transform: translateX(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateX(2px) rotate(1deg);
+  }
+  75% {
+    transform: translateX(-2px) rotate(-1deg);
+  }
+}
+
+.animate-buzz {
+  animation: buzz 0.5s ease-in-out infinite;
+}
+
+/* Pollen particle effect */
+@keyframes pollen {
+  0% {
+    opacity: 0;
+    transform: translateY(0px) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0);
+  }
+}
+
+.animate-pollen {
+  animation: pollen 2s ease-in-out infinite;
 }
