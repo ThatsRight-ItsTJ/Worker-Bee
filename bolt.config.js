@@ -1,13 +1,17 @@
 export default {
   // Build configuration
   build: {
-    command: "npm run build",
-    output: "openoperator-ui/dist"
+    command: "pip install -r requirements.txt && python -m playwright install chromium && cd openoperator-ui && npm install && npm run build",
+    output: "openoperator-ui/dist",
+    env: {
+      PYTHONPATH: "/app",
+      NODE_ENV: "production"
+    }
   },
   
   // Development configuration
   dev: {
-    command: "cd openoperator-ui && npm run dev",
+    command: "python backend_server.py",
     port: 5173,
     env: {
       NODE_ENV: "development"

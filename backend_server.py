@@ -8,6 +8,7 @@ import json
 import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask import send_from_directory
 import sys
 import os
 
@@ -25,6 +26,17 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+# Serve static files from the built frontend
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_frontend(path):
+    """Serve the React frontend"""
+    frontend_dir = os.path.join(os.path.dirname(__file__), 'openoperator-ui', 'dist')
+    if path != "" and os.path.exists(os.path.join(frontend_dir, path)):
+        return send_from_directory(frontend_dir, path)
+    else:
+        return send_from_directory(frontend_dir, 'index.html')
 
 # Serve static files from the built frontend
 @app.route('/', defaults={'path': ''})
