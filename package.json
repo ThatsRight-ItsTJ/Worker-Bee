@@ -5,10 +5,10 @@
   "main": "server.js",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "python backend_server.py",
+    "dev:backend": "python3 backend_server.py",
     "dev:frontend": "cd openoperator-ui && npm run dev",
     "build": "npm run install:frontend && npm run build:frontend",
-    "start": "python backend_server.py",
+    "start": "python3 backend_server.py",
     "deploy": "echo 'Ready for Bolt deployment! Set environment variables and click Deploy in Bolt dashboard.'",
     "install:frontend": "cd openoperator-ui && npm install",
     "build:frontend": "cd openoperator-ui && npm run build",
