@@ -9,10 +9,12 @@
     "dev:frontend": "cd openoperator-ui && npm run dev",
     "build": "npm run install:frontend && npm run build:frontend",
     "start": "python backend_server.py",
+    "deploy": "echo 'Ready for Bolt deployment! Set environment variables and click Deploy in Bolt dashboard.'",
     "install:frontend": "cd openoperator-ui && npm install",
     "build:frontend": "cd openoperator-ui && npm run build",
     "setup": "pip install -r requirements.txt && npm run install:frontend",
-    "vercel-build": "npm run install:frontend && npm run build:frontend"
+    "vercel-build": "npm run install:frontend && npm run build:frontend",
+    "bolt-deploy": "echo 'Deploying to Bolt... Make sure environment variables are set!'"
   },
   "dependencies": {
     "concurrently": "^8.2.2"

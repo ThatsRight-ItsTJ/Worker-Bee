@@ -199,9 +199,20 @@ This will test:
 
 ### 🚀 Bolt Hosting (Recommended)
 
-The app is ready for Bolt deployment:
+### Quick Deploy Guide
 
-1. **Deploy directly from this directory** - just push to Bolt!
+Since you're already in Bolt, deployment is simple:
+
+1. **Click the "Deploy" button** in your Bolt interface
+2. **Set environment variables** (see below)
+3. **Click Deploy** - Bolt handles the rest!
+
+### Alternative: Create New Bolt Project
+
+1. Go to [bolt.new](https://bolt.new)
+2. Create a new project
+3. Copy this code to the new project
+4. Follow deployment steps
 
 2. **Recommended Environment Variables for Bolt:**
    ```
