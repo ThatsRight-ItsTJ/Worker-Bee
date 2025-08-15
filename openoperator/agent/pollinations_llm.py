@@ -115,6 +115,11 @@ class PollinationsChatModel(BaseChatModel):
             "max_tokens": kwargs.get("max_tokens", self.max_tokens),
         }
         
+        # Add tools if bound
+        if self.bound_tools:
+            payload["tools"] = self.bound_tools
+            payload["tool_choice"] = "auto"
+        
         # Add stop sequences if provided
         if stop:
             payload["stop"] = stop
@@ -136,7 +141,8 @@ class PollinationsChatModel(BaseChatModel):
                 self.base_url,
                 headers=headers,
                 json=payload,
-                timeout=self.timeout
+                timeout=self.timeout,
+                allow_redirects=True
             )
             response.raise_for_status()
             
@@ -169,10 +175,48 @@ class PollinationsChatModel(BaseChatModel):
                 
         except requests.exceptions.RequestException as e:
             logger.error(f"Request to Pollinations API failed: {e}")
+            # Try fallback with simple GET endpoint
+            if "502" in str(e) or "503" in str(e):
+                return self._fallback_generate(messages, **kwargs)
             raise ValueError(f"Pollinations API request failed: {e}")
         except Exception as e:
             logger.error(f"Error processing Pollinations response: {e}")
             raise ValueError(f"Error processing Pollinations response: {e}")
+    
+    def _fallback_generate(self, messages: List[BaseMessage], **kwargs) -> ChatResult:
+        """Fallback generation using simple GET endpoint when OpenAI endpoint fails"""
+        try:
+            # Extract the last user message for simple generation
+            user_messages = [msg for msg in messages if isinstance(msg, HumanMessage)]
+            if not user_messages:
+                raise ValueError("No user message found for fallback generation")
+            
+            last_message = user_messages[-1].content
+            
+            # Use simple GET endpoint as fallback
+            fallback_url = f"https://text.pollinations.ai/{last_message}"
+            
+            headers = {}
+            if self.api_key:
+                headers["Authorization"] = f"Bearer {self.api_key}"
+            
+            response = requests.get(fallback_url, headers=headers, timeout=30)
+            response.raise_for_status()
+            
+            content = response.text.strip()
+            if not content:
+                content = "I apologize, but I'm having trouble generating a response right now."
+            
+            message = AIMessage(content=content)
+            generation = ChatGeneration(message=message)
+            return ChatResult(generations=[generation])
+            
+        except Exception as e:
+            logger.error(f"Fallback generation also failed: {e}")
+            # Last resort - return a helpful error message
+            message = AIMessage(content="I'm experiencing technical difficulties. Please try again in a moment.")
+            generation = ChatGeneration(message=message)
+            return ChatResult(generations=[generation])
     
     def _stream(
         self,

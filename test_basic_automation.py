@@ -37,7 +37,7 @@ async def test_basic_automation():
     
     # Compile the agent graph
     app = graph.compile()
-    config = {"configurable": {"temperature": 0.5}, "recursion_limit": 50}
+    config = {"configurable": {"temperature": 0.1}, "recursion_limit": 100}
     
     # Test cases - start with simple ones
     test_cases = [
