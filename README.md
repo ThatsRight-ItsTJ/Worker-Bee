@@ -33,12 +33,22 @@ cd Worker-Bee
 pip install -r requirements.txt
 ```
 
-3. **Set up environment variables:**
+3. **Install Playwright browsers:**
+```bash
+playwright install
+
+# If you get dependency warnings on Linux, also run:
+sudo playwright install-deps
+# OR on Ubuntu/Debian:
+sudo apt-get install libavif16
+```
+
+4. **Set up environment variables:**
 ```bash
 cp .env.example .env
 ```
 
-4. **Configure your `.env` file:**
+5. **Configure your `.env` file:**
 ```env
 # Required: Your AI model configuration
 MODEL=gpt-4o

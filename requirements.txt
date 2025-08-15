@@ -10,8 +10,7 @@ pymupdf>=1.25.2
 httpx>=0.27.2
 
 # Browser automation
-playwright>=1.40.0
-playwright[chromium]>=1.40.0
+playwright>=1.54.0
 pillow>=11.1.0
 
 # Optional: Azure OpenAI support
