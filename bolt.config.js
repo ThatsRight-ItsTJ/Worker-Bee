@@ -1,7 +1,7 @@
 export default {
   // Build configuration
   build: {
-    command: "cd openoperator-ui && npm install && npm run build",
+    command: "npm run build",
     output: "openoperator-ui/dist"
   },
   
