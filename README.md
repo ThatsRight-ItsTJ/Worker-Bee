@@ -14,6 +14,23 @@ A powerful web automation agent that combines browser automation with AI-powered
 
 ## Quick Start
 
+### Web UI (Recommended)
+
+The easiest way to use OpenOperator is through the web interface:
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+cd openoperator-ui && npm install && cd ..
+
+# Start the application
+python start_ui.py
+```
+
+Then open your browser to:
+- **Frontend UI**: http://localhost:5173
+- **Backend API**: http://localhost:5000
+
 ### Prerequisites
 
 - Python 3.8+
@@ -110,34 +127,6 @@ LANGCHAIN_PROJECT=your_project_name
 
 ## Usage
 
-### Web UI (Recommended)
-
-The easiest way to use OpenOperator is through the web interface:
-
-```bash
-# Install additional dependencies for the UI
-pip install flask flask-cors
-
-# Install frontend dependencies
-cd openoperator-ui
-npm install
-cd ..
-
-# Start both backend and frontend servers
-python start_ui.py
-```
-
-Then open your browser to:
-- **Frontend UI**: http://localhost:5173
-- **Backend API**: http://localhost:5000
-
-The web UI provides:
-- Clean, intuitive interface for entering URLs and queries
-- Real-time analysis with progress indicators
-- Structured results with sources and quotes
-- Example queries to get started quickly
-- Responsive design that works on all devices
-
 ### Basic Web Automation
 
 ```python
@@ -206,6 +195,27 @@ This will test:
 - Error handling
 - Multiple AI model support
 
+## Deployment
+
+### 🚀 Bolt Hosting (Recommended)
+
+The app is ready for Bolt deployment:
+
+1. **Deploy directly from this directory**
+2. **Set environment variables in Bolt:**
+   - `MODEL=gpt-4o`
+   - `MODEL_PROVIDER=azure`
+   - `AZURE_OPENAI_API_KEY=your_key`
+   - `AZURE_OPENAI_ENDPOINT=your_endpoint`
+
+3. **Bolt automatically handles:**
+   - Python dependencies installation
+   - Playwright browser installation
+   - Frontend build process
+   - Production server setup
+
+See `deploy.md` for detailed deployment instructions and alternative hosting options.
+
 ## Project Structure
 
 ```
@@ -216,9 +226,13 @@ Worker-Bee/
 │   │   └── pollinations/   # Pollinations AI tools
 │   ├── utils/              # Helper utilities
 │   └── examples/           # Usage examples
-├── tests/                  # Test files
-├── .env.example           # Environment template
-└── README.md              # This file
+├── openoperator-ui/           # React web interface
+├── tests/                     # Test files
+├── .env.example              # Environment template
+├── bolt.config.js            # Bolt deployment config
+├── Dockerfile                # Container configuration
+├── deploy.md                 # Deployment guide
+└── README.md                 # This file
 ```
 
 ## Key Components
