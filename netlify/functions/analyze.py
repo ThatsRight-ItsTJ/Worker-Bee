@@ -1,11 +1,4 @@
 import json
-import os
-import sys
-import asyncio
-from urllib.parse import parse_qs
-
-# Add the project root to Python path
-sys.path.append('/opt/build/repo')
 
 def handler(event, context):
     """Netlify function handler for the analyze endpoint"""
@@ -49,13 +42,12 @@ def handler(event, context):
                 'body': json.dumps({'error': 'Both URL and query are required'})
             }
         
-        # For Netlify, we'll return a simplified response since Playwright won't work
-        # In a real deployment, you'd need to use a headless browser service
+        # For static deployment, return a demo response
         response = {
-            'ops_summary': 'Analysis completed using Netlify Functions',
-            'answer': f'This is a demo response for URL: {url} with query: {query}. Full browser automation is not available on Netlify due to platform limitations. Consider using Bolt Hosting or Railway for full functionality.',
+            'ops_summary': 'Static deployment demo - full automation requires server hosting',
+            'answer': f'This is a demo response for URL: {url} with query: {query}. For full web automation capabilities, please deploy to a server environment like Railway, Render, or use the local development server.',
             'sources': [url],
-            'quotes': ['Demo quote: Browser automation requires a different hosting platform for full functionality.']
+            'quotes': ['Demo: This static deployment shows the UI but cannot perform actual web automation.']
         }
         
         return {
@@ -76,6 +68,6 @@ def handler(event, context):
             },
             'body': json.dumps({
                 'error': f'Analysis failed: {str(e)}',
-                'details': 'Browser automation is not supported on Netlify. Consider using Bolt Hosting or Railway for full functionality.'
+                'details': 'This is a static deployment. For full functionality, deploy to a server environment.'
             })
         }

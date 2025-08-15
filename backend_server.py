@@ -6,11 +6,12 @@ Simple Flask backend server for OpenOperator UI
 import asyncio
 import json
 import logging
+import os
+import sys
+import time
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask import send_from_directory
-import sys
-import os
 
 # Get port from environment variable (for deployment)
 PORT = int(os.environ.get('PORT', 5000))
@@ -19,13 +20,15 @@ HOST = os.environ.get('HOST', '0.0.0.0')
 # Add the project root to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from openoperator.agent.graph import graph
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+# Import time for health check
+import time
 
 # Health check endpoint (for Bolt monitoring)
 @app.route('/health', methods=['GET'])
@@ -72,17 +75,29 @@ def serve_frontend(path):
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Import time for health check
-import time
-
-# Compile the agent graph once at startup
-agent_app = graph.compile()
+# Initialize agent lazily to avoid import errors during build
+agent_app = None
 config = {"configurable": {"temperature": 0.1}, "recursion_limit": 50}
+
+def get_agent():
+    """Lazy initialization of the agent"""
+    global agent_app
+    if agent_app is None:
+        try:
+            from openoperator.agent.graph import graph
+            agent_app = graph.compile()
+        except ImportError as e:
+            logger.error(f"Failed to import agent: {e}")
+            raise
+    return agent_app
 
 @app.route('/api/analyze', methods=['POST'])
 def analyze_website():
     """Analyze a website with the given query"""
     try:
+        # Get the agent (lazy initialization)
+        agent = get_agent()
+        
         data = request.get_json()
         
         if not data:
@@ -102,7 +117,7 @@ def analyze_website():
         
         try:
             result = loop.run_until_complete(
-                agent_app.ainvoke({"url": url, "query": query}, config=config)
+                agent.ainvoke({"url": url, "query": query}, config=config)
             )
             
             final_output = result.get("final_output", "No output available.")
@@ -154,19 +169,9 @@ def root():
     })
 
 if __name__ == '__main__':
-    # Check required environment variables
-    required_vars = ["MODEL_PROVIDER"]  # MODEL has a default
-    missing_vars = [var for var in required_vars if not os.getenv(var)]
-    
-    if missing_vars:
-        logger.error(f"Missing required environment variables: {', '.join(missing_vars)}")
-        logger.error("Please set MODEL_PROVIDER in your environment variables")
-        logger.error("Recommended: MODEL_PROVIDER=pollinations (free)")
-        sys.exit(1)
-    
     logger.info("🐝 Starting Worker Bee API server...")
     logger.info(f"Model: {os.getenv('MODEL', 'openai')}")
-    logger.info(f"Provider: {os.getenv('MODEL_PROVIDER')}")
+    logger.info(f"Provider: {os.getenv('MODEL_PROVIDER', 'not set')}")
     logger.info(f"Server: http://{HOST}:{PORT}")
     
     app.run(host=HOST, port=PORT, debug=False)

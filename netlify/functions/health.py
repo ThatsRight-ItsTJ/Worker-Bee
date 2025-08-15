@@ -23,7 +23,7 @@ def handler(event, context):
         'headers': headers,
         'body': json.dumps({
             'status': 'healthy',
-            'service': 'Worker Bee API (Netlify)',
-            'note': 'Full browser automation requires Bolt Hosting or Railway'
+            'service': 'Worker Bee API (Static)',
+            'note': 'This is a static deployment. Full automation features require server hosting.'
         })
     }
