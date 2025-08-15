@@ -37,14 +37,14 @@ async def test_basic_automation():
     
     # Compile the agent graph
     app = graph.compile()
-    config = {"configurable": {"temperature": 0.5}, "recursion_limit": 25}
+    config = {"configurable": {"temperature": 0.5}, "recursion_limit": 50}
     
     # Test cases - start with simple ones
     test_cases = [
         {
-            "name": "Simple Google Search",
-            "url": "https://www.google.com",
-            "query": "Search for 'OpenAI' and tell me what you find on the first page"
+            "name": "Simple Website Analysis",
+            "url": "https://example.com",
+            "query": "Tell me what this website is about and what content is displayed"
         },
         {
             "name": "Wikipedia Navigation", 
@@ -58,8 +58,8 @@ async def test_basic_automation():
         }
     ]
     
-    # Run a simple test case
-    test_case = test_cases[0]  # Start with Google search
+    # Run a simple test case - start with example.com (simpler)
+    test_case = test_cases[0]  # Start with example.com
     
     print(f"🔍 Running test: {test_case['name']}")
     print(f"📍 URL: {test_case['url']}")
@@ -67,6 +67,7 @@ async def test_basic_automation():
     print("-" * 50)
     
     try:
+        print("🚀 Starting agent execution...")
         result = await app.ainvoke({
             "url": test_case["url"], 
             "query": test_case["query"]
@@ -88,9 +89,19 @@ async def test_basic_automation():
             print(final_output)
             
     except Exception as e:
-        print(f"❌ Test failed with error: {e}")
+        print(f"❌ Test failed with error: {str(e)}")
+        print("\n🔍 Debugging info:")
+        print(f"Error type: {type(e).__name__}")
         import traceback
         traceback.print_exc()
+        
+        # Suggest solutions
+        if "recursion" in str(e).lower():
+            print("\n💡 Possible solutions:")
+            print("1. The agent might be stuck in a loop")
+            print("2. Try a simpler task or different URL")
+            print("3. Check if the LLM is properly calling tools")
+            print("4. Enable debug logging: BROWSER_USE_LOGGING_LEVEL=debug")
 
 async def test_interactive_mode():
     """Interactive mode for custom testing"""

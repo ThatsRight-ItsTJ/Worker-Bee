@@ -145,8 +145,23 @@ class PollinationsChatModel(BaseChatModel):
             
             # Extract content from response
             if "choices" in result and len(result["choices"]) > 0:
-                content = result["choices"][0]["message"]["content"]
-                message = AIMessage(content=content)
+                choice = result["choices"][0]
+                message_data = choice["message"]
+                
+                # Handle tool calls if present
+                if "tool_calls" in message_data and message_data["tool_calls"]:
+                    logger.debug(f"Tool calls detected: {message_data['tool_calls']}")
+                    message = AIMessage(
+                        content=message_data.get("content", ""),
+                        tool_calls=message_data["tool_calls"]
+                    )
+                else:
+                    content = message_data.get("content", "")
+                    if not content:
+                        logger.warning("Empty content received from Pollinations API")
+                        content = "I apologize, but I didn't receive a proper response. Let me try again."
+                    message = AIMessage(content=content)
+                
                 generation = ChatGeneration(message=message)
                 return ChatResult(generations=[generation])
             else:
