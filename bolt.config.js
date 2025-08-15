@@ -1,13 +1,13 @@
 export default {
   // Build configuration
   build: {
-    command: "npm run build",
+    command: "cd openoperator-ui && npm install && npm run build",
     output: "openoperator-ui/dist"
   },
   
   // Development configuration
   dev: {
-    command: "npm run dev",
+    command: "cd openoperator-ui && npm run dev",
     port: 5173,
     env: {
       NODE_ENV: "development"
