@@ -137,6 +137,23 @@ def agent(state: OverallState,
     logger.debug(f"Agent node - History length: {len(history)}")
     logger.debug(f"Agent node - Available files: {available_files}")
     
+    # Check for too many punishment messages - break the loop
+    punishment_count = sum(1 for msg in history if "punishment_message" in str(msg.content).lower())
+    if punishment_count >= 3:
+        logger.warning(f"Too many punishment messages ({punishment_count}), raising error to break loop")
+        return Command(goto="shutdown", 
+                       update={"final_output": "System error: Agent encountered repeated failures and cannot continue. Please check Playwright installation and API connectivity."})
+    
+    # Check for browser errors and provide helpful response
+    recent_messages = history[-3:] if len(history) >= 3 else history
+    browser_error_detected = any("playwright" in str(msg.content).lower() or "executable doesn't exist" in str(msg.content).lower() 
+                                for msg in recent_messages)
+    
+    if browser_error_detected:
+        logger.warning("Browser installation error detected")
+        return Command(goto="shutdown", 
+                       update={"final_output": "Browser setup error: Playwright browsers are not installed. Please run 'playwright install' to install the required browsers, then try again."})
+    
     response = (chat | model).invoke({"history": history, 
                                       "files": available_files})
     
