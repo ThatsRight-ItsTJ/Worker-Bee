@@ -132,26 +132,38 @@ def agent(state: OverallState,
             MessagesPlaceholder('history')
             ]
         )
+    
+    # Debug logging
+    logger.debug(f"Agent node - History length: {len(history)}")
+    logger.debug(f"Agent node - Available files: {available_files}")
+    
     response = (chat | model).invoke({"history": history, 
                                       "files": available_files})
+    
+    logger.debug(f"Agent response type: {type(response)}")
+    logger.debug(f"Agent response tool_calls: {getattr(response, 'tool_calls', None)}")
     
     # routing tree
     if response.tool_calls: # type: ignore
         tool_call = response.tool_calls[0] # type: ignore
+        logger.debug(f"Tool call detected: {tool_call}")
 
         # think tool doesn't need a tool node. instead we just turn it's args into an ai message and loop back to the agent node
         if tool_call.get("name") == "think": # type: ignore
             template = AIMessagePromptTemplate.from_template(CONCLUSIONS_TEMPLATE)
             payload = tool_call["args"] # type: ignore
             message = template.format(**payload)
+            logger.debug("Think tool called - looping back to agent")
             return Command(goto="agent", 
                            update={"messages": [message]})
         
         else:
+            logger.debug(f"Regular tool call: {tool_call.get('name')}")
             return Command(goto="tools", 
                            update={"messages": [response]})
         
     # if the response doesn't have tool calls, we add punishment message to the messages and go back to the agent node
+    logger.warning("No tool calls detected - adding punishment message")
     punishment_message = SystemMessage(content=PUNISHMENT_MESSAGE_TEMPLATE)
     return Command(goto="agent", 
                    update={"messages": [response, punishment_message]})
