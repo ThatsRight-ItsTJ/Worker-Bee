@@ -179,7 +179,7 @@ class PollinationsChatModel(BaseChatModel):
                             })
                     
                     message = AIMessage(
-                        content=message_data.get("content", ""),
+                        content=message_data.get("content") or "",
                         tool_calls=langchain_tool_calls
                     )
                 else:
