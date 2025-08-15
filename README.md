@@ -110,6 +110,34 @@ LANGCHAIN_PROJECT=your_project_name
 
 ## Usage
 
+### Web UI (Recommended)
+
+The easiest way to use OpenOperator is through the web interface:
+
+```bash
+# Install additional dependencies for the UI
+pip install flask flask-cors
+
+# Install frontend dependencies
+cd openoperator-ui
+npm install
+cd ..
+
+# Start both backend and frontend servers
+python start_ui.py
+```
+
+Then open your browser to:
+- **Frontend UI**: http://localhost:5173
+- **Backend API**: http://localhost:5000
+
+The web UI provides:
+- Clean, intuitive interface for entering URLs and queries
+- Real-time analysis with progress indicators
+- Structured results with sources and quotes
+- Example queries to get started quickly
+- Responsive design that works on all devices
+
 ### Basic Web Automation
 
 ```python
