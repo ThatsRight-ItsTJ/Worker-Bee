@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Globe, Search, Bot, Loader2, CheckCircle, XCircle, ExternalLink } from 'lucide-react'
 import './App.css'
 
 function App() {
@@ -59,7 +58,7 @@ function App() {
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <Bot className="w-12 h-12 text-indigo-600 mr-3" />
+            <div className="w-12 h-12 bg-indigo-600 rounded-lg mr-3 flex items-center justify-center text-white font-bold text-xl">🤖</div>
             <h1 className="text-4xl font-bold text-gray-800">OpenOperator</h1>
           </div>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -67,7 +66,7 @@ function App() {
             Analyze any website with natural language queries.
           </p>
           <div className="flex items-center justify-center mt-4 text-sm text-gray-500">
-            <Globe className="w-4 h-4 mr-1" />
+            <span className="mr-1">🌐</span>
             <span>Powered by Pollinations AI • Free & Unlimited</span>
           </div>
         </div>
@@ -82,7 +81,7 @@ function App() {
                   Website URL
                 </label>
                 <div className="relative">
-                  <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">🌐</span>
                   <input
                     type="url"
                     id="url"
@@ -101,7 +100,7 @@ function App() {
                   What would you like to know?
                 </label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-4 text-gray-400 w-5 h-5" />
+                  <span className="absolute left-3 top-4 text-gray-400">🔍</span>
                   <textarea
                     id="query"
                     value={query}
@@ -122,12 +121,12 @@ function App() {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     Analyzing Website...
                   </>
                 ) : (
                   <>
-                    <Bot className="w-5 h-5 mr-2" />
+                    <span className="mr-2">🤖</span>
                     Analyze Website
                   </>
                 )}
@@ -160,7 +159,7 @@ function App() {
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
               <div className="flex items-center">
-                <XCircle className="w-5 h-5 text-red-500 mr-2" />
+                <span className="text-red-500 mr-2">❌</span>
                 <span className="text-red-700 font-medium">Error</span>
               </div>
               <p className="text-red-600 mt-1">{error}</p>
@@ -171,7 +170,7 @@ function App() {
           {result && (
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <div className="flex items-center mb-6">
-                <CheckCircle className="w-6 h-6 text-green-500 mr-2" />
+                <span className="text-green-500 mr-2 text-xl">✅</span>
                 <h2 className="text-2xl font-bold text-gray-800">Analysis Complete</h2>
               </div>
 
@@ -202,7 +201,7 @@ function App() {
                         rel="noopener noreferrer"
                         className="flex items-center text-indigo-600 hover:text-indigo-800 transition-colors"
                       >
-                        <ExternalLink className="w-4 h-4 mr-2" />
+                        <span className="mr-2">🔗</span>
                         {source}
                       </a>
                     ))}
