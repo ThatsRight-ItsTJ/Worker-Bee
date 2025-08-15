@@ -1,7 +1,7 @@
 export default {
   // Build configuration
   build: {
-    command: "pip install -r requirements.txt && python -m playwright install chromium && cd openoperator-ui && npm install && npm run build",
+    command: "pip install --no-cache-dir -r requirements.txt && python -m playwright install chromium && python -m playwright install-deps && cd openoperator-ui && npm install && npm run build",
     output: "openoperator-ui/dist",
     env: {
       PYTHONPATH: "/app",
@@ -12,7 +12,7 @@ export default {
   // Development configuration
   dev: {
     command: "python backend_server.py",
-    port: 5173,
+    port: 5000,
     env: {
       NODE_ENV: "development"
     }
@@ -31,10 +31,6 @@ export default {
     },
     
     // Pollinations configuration (recommended)
-    POLLINATIONS_API_KEY: {
-      description: "Pollinations API key (optional - provides higher rate limits)",
-      required: true
-    },
     POLLINATIONS_REFERRER: {
       description: "Pollinations referrer for authentication",
       default: "worker-bee-bolt-v1"
@@ -57,13 +53,13 @@ export default {
       description: "Anthropic API key",
       required: false
     },
+    GROQ_API_KEY: {
+      description: "Groq API key for fast inference",
+      required: false
+    },
     POLLINATIONS_API_KEY: {
       description: "Pollinations API key (optional)",
       required: false
-    },
-    POLLINATIONS_REFERRER: {
-      description: "Pollinations referrer",
-      default: "openoperator-v1"
     },
     LANGCHAIN_TRACING_V2: {
       description: "Enable LangChain tracing",
@@ -75,11 +71,19 @@ export default {
     },
     LANGCHAIN_PROJECT: {
       description: "LangChain project name",
-      default: "openoperator"
+      default: "worker-bee"
     },
     BROWSER_USE_LOGGING_LEVEL: {
       description: "Logging level",
       default: "info"
+    },
+    PORT: {
+      description: "Server port",
+      default: "5000"
+    },
+    HOST: {
+      description: "Server host",
+      default: "0.0.0.0"
     }
   },
   
@@ -89,12 +93,12 @@ export default {
     healthCheck: "/api/health",
     
     // Startup timeout (web automation can take time to initialize)
-    timeout: 300,
+    timeout: 600,
     
     // Memory and CPU requirements
     resources: {
-      memory: "1GB",
-      cpu: "1"
+      memory: "2GB",
+      cpu: "2"
     }
   }
 }

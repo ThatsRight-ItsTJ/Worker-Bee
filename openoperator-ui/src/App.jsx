@@ -89,7 +89,7 @@ function App() {
           <div className="flex items-center justify-center space-x-6 text-sm text-gray-600">
             <div className="flex items-center">
               <span className="mr-2 text-lg">🌸</span>
-              <span>Powered by Pollinations AI</span>
+              <span>Free AI Vision & Text</span>
             </div>
             <div className="flex items-center">
               <span className="mr-2 text-lg">🆓</span>
@@ -97,7 +97,7 @@ function App() {
             </div>
             <div className="flex items-center">
               <span className="mr-2 text-lg">⚡</span>
-              <span>Lightning Fast</span>
+              <span>Deploy on Bolt</span>
             </div>
           </div>
         </div>
@@ -286,10 +286,10 @@ function App() {
         <footer className="text-center mt-16 text-gray-600">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <span className="text-2xl">🐝</span>
-            <p className="text-lg">Built with Worker Bee • Powered by Pollinations AI • Open Source</p>
+            <p className="text-lg">Worker Bee • Free AI Web Automation • Deploy on Bolt</p>
             <span className="text-2xl">🍯</span>
           </div>
-          <p className="text-sm">Buzzing around the web, collecting knowledge one site at a time</p>
+          <p className="text-sm">Buzzing around the web, collecting knowledge one site at a time • Ready for Bolt Hosting</p>
         </footer>
       </div>
     </div>

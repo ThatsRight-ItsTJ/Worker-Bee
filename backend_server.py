@@ -27,30 +27,53 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+# Health check endpoint (for Bolt monitoring)
+@app.route('/health', methods=['GET'])
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    """Health check endpoint for deployment monitoring"""
+    try:
+        # Quick check that core components are working
+        model = os.getenv("MODEL", "not set")
+        provider = os.getenv("MODEL_PROVIDER", "not set")
+        
+        return jsonify({
+            'status': 'healthy',
+            'service': 'Worker Bee API',
+            'version': '1.0.0',
+            'model': model,
+            'provider': provider,
+            'timestamp': time.time()
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e)
+        }), 500
+
 # Serve static files from the built frontend
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
     """Serve the React frontend"""
     frontend_dir = os.path.join(os.path.dirname(__file__), 'openoperator-ui', 'dist')
-    if path != "" and os.path.exists(os.path.join(frontend_dir, path)):
+    
+    # Handle static assets
+    if path and os.path.exists(os.path.join(frontend_dir, path)):
         return send_from_directory(frontend_dir, path)
-    else:
+    
+    # Serve index.html for all other routes (SPA routing)
+    if os.path.exists(os.path.join(frontend_dir, 'index.html')):
         return send_from_directory(frontend_dir, 'index.html')
-
-# Serve static files from the built frontend
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve_frontend(path):
-    """Serve the React frontend"""
-    if path != "" and os.path.exists(os.path.join('openoperator-ui/dist', path)):
-        return send_from_directory('openoperator-ui/dist', path)
     else:
-        return send_from_directory('openoperator-ui/dist', 'index.html')
+        return jsonify({'error': 'Frontend not built. Please run build process.'}), 500
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Import time for health check
+import time
 
 # Compile the agent graph once at startup
 agent_app = graph.compile()
@@ -111,38 +134,39 @@ def analyze_website():
         logger.error(f"Error during analysis: {str(e)}")
         return jsonify({
             'error': f'Analysis failed: {str(e)}',
-            'details': 'Please check if the URL is accessible and try again.'
+        'details': 'Please check if the URL is accessible and try again.',
+        'suggestion': 'Try with a simpler URL like https://example.com first'
         }), 500
-
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    """Health check endpoint"""
-    return jsonify({'status': 'healthy', 'service': 'OpenOperator API'})
 
 @app.route('/', methods=['GET'])
 def root():
     """Root endpoint with API info"""
     return jsonify({
-        'service': 'OpenOperator API',
+        'service': 'Worker Bee API',
         'version': '1.0.0',
+        'description': 'AI-powered web automation and information extraction',
         'endpoints': {
             'analyze': '/api/analyze (POST)',
-            'health': '/api/health (GET)'
-        }
+            'health': '/api/health (GET)',
+            'frontend': '/ (GET)'
+        },
+        'status': 'ready'
     })
 
 if __name__ == '__main__':
     # Check required environment variables
-    required_vars = ["MODEL", "MODEL_PROVIDER"]
+    required_vars = ["MODEL_PROVIDER"]  # MODEL has a default
     missing_vars = [var for var in required_vars if not os.getenv(var)]
     
     if missing_vars:
         logger.error(f"Missing required environment variables: {', '.join(missing_vars)}")
-        logger.error("Please set these in your .env file")
+        logger.error("Please set MODEL_PROVIDER in your environment variables")
+        logger.error("Recommended: MODEL_PROVIDER=pollinations (free)")
         sys.exit(1)
     
-    logger.info("Starting OpenOperator API server...")
-    logger.info(f"Model: {os.getenv('MODEL')}")
+    logger.info("🐝 Starting Worker Bee API server...")
+    logger.info(f"Model: {os.getenv('MODEL', 'openai')}")
     logger.info(f"Provider: {os.getenv('MODEL_PROVIDER')}")
+    logger.info(f"Server: http://{HOST}:{PORT}")
     
     app.run(host=HOST, port=PORT, debug=False)

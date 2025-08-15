@@ -201,18 +201,42 @@ This will test:
 
 The app is ready for Bolt deployment:
 
-1. **Deploy directly from this directory**
-2. **Set environment variables in Bolt:**
-   - `MODEL=gpt-4o`
-   - `MODEL_PROVIDER=azure`
-   - `AZURE_OPENAI_API_KEY=your_key`
-   - `AZURE_OPENAI_ENDPOINT=your_endpoint`
+1. **Deploy directly from this directory** - just push to Bolt!
 
-3. **Bolt automatically handles:**
+2. **Recommended Environment Variables for Bolt:**
+   ```
+   MODEL_PROVIDER=pollinations
+   MODEL=openai
+   POLLINATIONS_REFERRER=worker-bee-bolt-v1
+   POLLINATIONS_API_KEY=your_key_here (optional - for higher rate limits)
+   ```
+
+3. **Alternative Providers (if you prefer):**
+   ```
+   # Azure OpenAI
+   MODEL_PROVIDER=azure
+   MODEL=gpt-4o
+   AZURE_OPENAI_API_KEY=your_key
+   AZURE_OPENAI_ENDPOINT=your_endpoint
+   
+   # OpenAI
+   MODEL_PROVIDER=openai
+   MODEL=gpt-4o
+   OPENAI_API_KEY=your_key
+   
+   # Groq (fast and often free)
+   MODEL_PROVIDER=groq
+   MODEL=llama-3.1-70b-versatile
+   GROQ_API_KEY=your_key
+   ```
+
+4. **Bolt automatically handles:**
    - Python dependencies installation
    - Playwright browser installation
+   - System dependencies for Linux
    - Frontend build process
    - Production server setup
+   - SSL certificates and domain routing
 
 See `deploy.md` for detailed deployment instructions and alternative hosting options.
 
