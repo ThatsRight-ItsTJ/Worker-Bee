@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './App.css'
+import './App.css';
 
 function App() {
   const [url, setUrl] = useState('')
@@ -153,12 +153,12 @@ function App() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 disabled:from-amber-300 disabled:to-yellow-300 text-white font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 disabled:scale-100 shadow-lg text-lg"
+                className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 disabled:from-amber-300 disabled:to-yellow-300 text-white font-bold py-4 px-8 rounded-xl transition-all transform hover:scale-105 disabled:scale-100 shadow-lg text-lg disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>
                     <div className="inline-flex items-center">
-                      <div className="w-6 h-6 mr-3 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-6 h-6 mr-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                       🐝 Worker Bee is Buzzing Around the Web...
                     </div>
                   </>
