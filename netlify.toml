@@ -1,6 +1,7 @@
 [build]
-  command = "npm run build"
+  command = "cd openoperator-ui && npm install && npm run build"
   publish = "openoperator-ui/dist"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -12,7 +13,7 @@
   to = "/index.html"
   status = 200
 
-# API routes should go to the backend
+# API routes should go to the backend functions
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
